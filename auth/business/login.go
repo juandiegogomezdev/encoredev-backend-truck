@@ -2,6 +2,7 @@ package business
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"encore.dev/beta/errs"
@@ -9,33 +10,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Validate if the provided password matches the stored hash.
 func (b *BusinessAuth) validatePassword(storedHash, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password))
 	return err == nil
 }
 
-// Login authenticates a user and returns a JWT token if successful.
+// Login authenticates a user and returns a JWT token with his email if successful.
 func (b *BusinessAuth) Login(ctx context.Context, email string, password string) (string, error) {
-	fmt.Println("Iniciando proceso de login para:", email)
-	fmt.Println("Contraseña proporcionada:", password)
 
-	// Debug checks
-	if b == nil {
-		fmt.Println("Error: BusinessAuth is nil")
-		return "", fmt.Errorf("BusinessAuth is nil")
-	}
-	if b.store == nil {
-		fmt.Println("Error: store no inicializado")
-		return "", fmt.Errorf("store is nil")
-	}
-
-	fmt.Printf("Store: %+v\n", b.store)
 	// Fetch user by email
 	user, err := b.store.GetUserByEmail(ctx, email)
 	if err != nil {
 
-		fmt.Printf("Error getting user by email: %v\n", err)
-		if err == sqldb.ErrNoRows {
+		if errors.Is(err, sqldb.ErrNoRows) {
 			return "", &errs.Error{
 				Code:    errs.NotFound,
 				Message: "Usuario no encontrado",

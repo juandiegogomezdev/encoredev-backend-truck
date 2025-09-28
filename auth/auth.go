@@ -1,3 +1,4 @@
+// Service auth implements user login and register functionality.
 package auth
 
 import (
@@ -5,12 +6,15 @@ import (
 
 	"encore.app/auth/business"
 	"encore.app/auth/store"
+	"encore.app/shared/myjwt"
 	"encore.dev/storage/sqldb"
 )
 
 var sharedDB = sqldb.NewDatabase("shareddb", sqldb.DatabaseConfig{
 	Migrations: "./migrations",
 })
+
+// var jwtSecretKey = config.Secret("JWT_SECRET_KEY")
 
 //encore:service
 type ServiceAuth struct {
@@ -19,12 +23,9 @@ type ServiceAuth struct {
 
 func initServiceAuth() (*ServiceAuth, error) {
 	s := store.NewAuthStore(sharedDB)
-	b := business.NewAuthBusiness(s)
+	tokenizer := myjwt.NewJWTTokenizer("MY_SECRET")
+	b := business.NewAuthBusiness(s, tokenizer)
 	return &ServiceAuth{b: b}, nil
-}
-
-type Response struct {
-	Message string
 }
 
 //encore:api public path=/saludo/:name
@@ -33,13 +34,8 @@ func World(ctx context.Context, name string) (*Response, error) {
 	return &Response{Message: msg}, nil
 }
 
-type RequestLogin struct {
-	Email    string
-	Password string
-}
-
-type ResponseLogin struct {
-	Token string
+type Response struct {
+	Message string
 }
 
 //encore:api public method=POST path=/auth/login
@@ -49,4 +45,13 @@ func (s *ServiceAuth) Login(ctx context.Context, req *RequestLogin) (*ResponseLo
 		return nil, err
 	}
 	return &ResponseLogin{Token: token}, nil
+}
+
+type RequestLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type ResponseLogin struct {
+	Token string `json:"token"`
 }

@@ -1,49 +1,82 @@
 package myjwt
 
 import (
-	"fmt"
-
 	"encore.dev/types/uuid"
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type JWTTokenizer interface {
+	// Generation
+	signToken(claims jwt.Claims) (string, error)
+
+	GenerateConfirmRegisterToken(newEmail string) (string, error)
+	GenerateConfirmLoginToken(email string) (string, error)
+	GenerateOrgSelectToken(userID uuid.UUID) (string, error)
+	GenerateMembershipToken(membershipID uuid.UUID) (string, error)
+
+	// Parsing
+	parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, error)
+	parseFullClaims(tokenString string) (*FullClaims, error)
+
+	parseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, error)
+	parseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, error)
+	parseOrgSelectToken(tokenString string) (*OrgSelectClaims, error)
+	parseMembershipToken(tokenString string) (*MembershipClaims, error)
+}
+
+type jwtTokenizer struct {
+	secretKey string
+}
+
+func NewJWTTokenizer(secretKey string) JWTTokenizer {
+	return &jwtTokenizer{secretKey: secretKey}
+}
+
 type TokenType string
 
 const (
-	TokenTypeLogin      TokenType = "login"
-	TokenTypeConfirmed  TokenType = "confirmed"
-	TokenTypeMembership TokenType = "membership"
+	TokenTypeConfirmRegister TokenType = "confirm_register"
+	TokenTypeConfirmLogin    TokenType = "confirm_login"
+	TokenTypeOrgSelect       TokenType = "org_select"
+	TokenTypeMembership      TokenType = "membership"
 )
 
-type LoginClaims struct {
-	Email     string    `json:"email"`
+// BaseClaims holds common JWT claims.
+type BaseClaims struct {
 	TokenType TokenType `json:"token_type"`
 	jwt.RegisteredClaims
 }
 
-type ConfirmedClaims struct {
-	UserID    uuid.UUID `json:"user_id"`
-	TokenType TokenType `json:"token_type"`
-	jwt.RegisteredClaims
+// Used for confirm register
+type ConfirmRegisterClaims struct {
+	NewEmail string `json:"new_email"`
+	BaseClaims
 }
 
-type MembershipClaim struct {
+// Used for confirm login
+type ConfirmLoginClaims struct {
+	Email string `json:"email"`
+	BaseClaims
+}
+
+// Used for allow selecting an organization
+type OrgSelectClaims struct {
+	UserID uuid.UUID `json:"user_id"`
+	BaseClaims
+}
+
+// Used for use the app as a member of an organization
+type MembershipClaims struct {
 	MembershipID uuid.UUID `json:"membership_id"`
-	TokenType    TokenType `json:"token_type"`
-	jwt.RegisteredClaims
+	BaseClaims
 }
 
-func ParseLoginToken(tokenString string) (jwt.Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &LoginClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("your-very-secret-key"), nil
-	}, jwt.WithValidMethods([]string{"HS256"}))
-
-	if err != nil {
-		return nil, err
-	}
-
-	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
-	}
-	return token.Claims, nil
+// Used for access static resources.
+// This token contains all the properties of the previous tokens
+type FullClaims struct {
+	NewEmail     string    `json:"new_email"`
+	Email        string    `json:"email"`
+	UserID       uuid.UUID `json:"user_id"`
+	MembershipID uuid.UUID `json:"membership_id"`
+	BaseClaims
 }

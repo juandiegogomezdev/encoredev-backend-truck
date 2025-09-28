@@ -1,11 +1,15 @@
 package business
 
-import "encore.app/auth/store"
+import (
+	"encore.app/auth/store"
+	"encore.app/shared/myjwt"
+)
 
 type BusinessAuth struct {
-	store *store.AuthStore
+	store     *store.AuthStore
+	tokenizer myjwt.JWTTokenizer
 }
 
-func NewAuthBusiness(store *store.AuthStore) *BusinessAuth {
-	return &BusinessAuth{store: store}
+func NewAuthBusiness(store *store.AuthStore, tokenizer myjwt.JWTTokenizer) *BusinessAuth {
+	return &BusinessAuth{store: store, tokenizer: tokenizer}
 }

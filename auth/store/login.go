@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"encore.dev/types/uuid"
@@ -17,16 +16,6 @@ type GetUserByEmailResult struct {
 // GetUserByEmail retrieves a user's ID by their email.
 func (s *AuthStore) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailResult, error) {
 	var result GetUserByEmailResult
-
-	// Debug checks
-	if s == nil {
-		return GetUserByEmailResult{}, fmt.Errorf("AuthStore is nil")
-	}
-	if s.db == nil {
-		return GetUserByEmailResult{}, fmt.Errorf("database is nil")
-	}
-
-	fmt.Printf("Executing query with email: %s\n", email)
 	q := "SELECT id, hashed_password FROM users WHERE email = $1"
 	err := s.db.QueryRow(ctx, q, email).Scan(&result.ID, &result.PasswordHash)
 	if err != nil {

@@ -58,7 +58,7 @@ On disk it might look like this:
     └── world.go        // world service code
 ```
 
-Learn more in the docs: https://encore.dev/docs/go/primitives/services
+Learn more in the docs: https://encore.dev/docshellhello.Worldo.World/go/primitives/services
 
 ### Create an API endpoint
 

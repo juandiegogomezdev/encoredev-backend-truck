@@ -1,0 +1,7 @@
+-- CREATE IF NOT EXISTS TABLE org_role_permissions (
+--     org_id UUID NOT NULL REFERENCES organizations(id),
+--     role_id UUID NOT NULL REFERENCES roles(id),
+--     permission_id UUID NOT NULL REFERENCES permissions(id),
+--     allowed BOOLEAN NOT NULL,
+--     PRIMARY KEY (org_id, role_id, permission_id)
+-- )

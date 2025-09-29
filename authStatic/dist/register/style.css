@@ -1,0 +1,110 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    font-family: system-ui, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+main {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+#formContainer {
+    width: 400px;
+    height: fit-content;
+    margin: auto;
+}
+h1, h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+
+.errorMessage {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: #fff6f6;
+    border-radius: 15px;
+
+    font-size: 1.0rem;
+    font-weight: 500;
+    color:crimson;
+    display: none;
+}
+
+#confirmForm {
+    margin-bottom: 30px;
+}
+
+
+.form-group {
+    display: block;
+    margin: 15px 0;
+    
+}
+
+label, input {
+    display: block;
+    width: 100%;
+}
+label {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: black;
+    opacity: 0.9;
+}
+input {
+    margin-top: 5px;
+    padding: 9px 11px;
+    border: solid 0.5px;
+    border-color: rgb(231, 231, 231);
+    border-radius: 9px;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+}
+
+input:focus {
+    outline: 2px solid black;
+}
+
+button {
+    display: block;
+    background-color: black;
+    width: 100%;
+
+    border: none;
+    padding: 9px 0px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+button:hover {
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+
+
+
+
+#successfulContainer {
+    width: 100%;
+    max-width: 350px;
+    margin: auto;
+    padding: 20px 20px;
+
+    background-color: #f6fff1;
+    color: green;
+    border-radius: 20px;
+    display: none;
+}

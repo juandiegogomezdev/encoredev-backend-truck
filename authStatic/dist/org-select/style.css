@@ -1,0 +1,156 @@
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --color-gray-light: oklch(.556 .012 106.423);
+    --color-red: crimson;
+    --color-red-light: oklch(93.6% 0.032 17.717);
+    --color-red-lighter: oklch(97.1% 0.013 17.38);
+
+    --color-green: oklch(.65 .15 160);
+    --color-green-lighter: oklch(.65 .15 160 / 0.1);
+    --color-green-light: oklch(.65 .15 160 / 0.2);
+
+    --color-grey: oklch(44.4% 0.011 73.639);
+    --color-grey-light: oklch(92.3% 0.003 48.717);
+    --color-grey-lighter: oklch(98.5% 0.001 106.423);
+
+    --color-indigo: oklch(39.8% 0.195 277.366);
+    --color-indigo-light: oklch(78.5% 0.115 274.713);
+    --color-indigo-lighter: oklch(96.2% 0.018 272.314);
+
+    --color-yellow: oklch(79.5% 0.184 86.047);
+    --color-yellow-light: oklch(94.5% 0.129 101.54);
+    --color-yellow-lighter: oklch(98.7% 0.026 102.212);
+
+    --color-orange: oklch(64.6% 0.222 41.116);
+    --color-orange-light: oklch(83.7% 0.128 66.29);
+    --color-orange-lighter: oklch(98% 0.016 73.684);
+
+    --color-tail: oklch(51.1% 0.096 186.391);
+    --color-tail-light: oklch(85.5% 0.138 181.071);
+    --color-tail-lighter: oklch(98.4% 0.014 180.72);
+
+    --shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    --shadow-2: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+html {
+    font-size: 180%
+}
+
+@media (max-width: 600px) {
+    html {
+        font-size: 140%
+    }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+
+
+/*  */
+
+.spaceHeader {
+    margin: 0px 0 12px 0;
+}
+
+.spaceSelected {
+    margin: 0 0 4px 0;
+}
+
+.spaceDescription {
+    margin: 0;
+    color: var(--color-gray-light);
+    font-size: 0.9rem;
+}
+
+.date {
+    font-size: 0.7rem;
+    color: var(--color-gray-light);
+    margin: 0;
+}
+
+.nameOrg {
+    font-size: 1.0rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+
+
+
+
+
+.statusOrg {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.statusOrgActive {
+    color: var(--color-green);
+    background-color: var(--color-green-lighter);
+    border: 1px solid var(--color-green-light);
+}
+
+.statusOrgSuspended {
+    color: var(--color-grey);
+    background-color: var(--color-grey-lighter);
+    border: 1px solid var(--color-grey-light);
+}
+
+
+.rol {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-weight: 800;
+    width: fit-content;
+}
+
+.rolOwner {
+    color: crimson;
+    background-color: var(--color-red-lighter);
+    border: 1px solid var(--color-red-light);
+}
+
+.rolPartner {
+    color: var(--color-indigo);
+    background-color: var(--color-indigo-lighter);
+    border: 1px solid var(--color-indigo-light);
+}
+
+.rolAdmin {
+    color: var(--color-tail);
+    background-color: var(--color-tail-lighter);
+    border: 1px solid var(--color-tail-light);
+}
+
+.rolDriver {
+    color: var(--color-orange);
+    background-color: var(--color-orange-lighter);
+    border: 1px solid var(--color-orange-light); 
+}
+
+.rolAccountant {
+    color: var(--color-indigo);
+    background-color: var(--color-indigo-lighter);
+    border: 1px solid var(--color-indigo-light);
+
+}
+
+.rolStatusSuspended {
+    color: var(--color-yellow);
+    background-color: var(--color-yellow-lighter);
+    border: 1px solid var(--color-yellow-light);
+}

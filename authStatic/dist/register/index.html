@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div id="formContainer">
+            <h1>Registrar usuario</h1>
+                <div class="errorMessage"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <span for="email">Correo</span>
+                        <input type="email" id="email" placeholder="example@gmail.com" required autocomplete="email">
+                    </div>
+                    <button type="submit">Registrar usuario</button>
+                </form>
+        </div>
+
+        <div id="successfulContainer">
+            <h2 id='successMessage'>Primer paso completado!</h2>
+            <p>Revisa los mensajes de tu correo para continuar con el registro.</p>
+        </div>
+        
+        
+    </main>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

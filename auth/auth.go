@@ -3,10 +3,13 @@ package auth
 
 import (
 	"context"
+	"fmt"
 
 	"encore.app/auth/business"
 	"encore.app/auth/store"
-	"encore.app/shared/myjwt"
+	"encore.app/pkg/myjwt"
+	"encore.app/pkg/resendmailer"
+	"encore.dev/config"
 	"encore.dev/storage/sqldb"
 )
 
@@ -14,7 +17,16 @@ var sharedDB = sqldb.NewDatabase("shareddb", sqldb.DatabaseConfig{
 	Migrations: "./migrations",
 })
 
-// var jwtSecretKey = config.Secret("JWT_SECRET_KEY")
+var secrets struct {
+	JWT_SECRET_KEY string
+	RESEND_API_KEY string
+}
+
+type ServiceConfig struct {
+	BaseUrl string
+}
+
+var cfg *ServiceConfig = config.Load[*ServiceConfig]()
 
 //encore:service
 type ServiceAuth struct {
@@ -22,9 +34,15 @@ type ServiceAuth struct {
 }
 
 func initServiceAuth() (*ServiceAuth, error) {
+	fmt.Println("secrets.JWT_SECRET_KEY:", secrets.JWT_SECRET_KEY)
+	fmt.Println("cfg", cfg.BaseUrl)
+
+	// Initialize the resend mailer
+	m := resendmailer.NewResendMailer(secrets.RESEND_API_KEY, "Acme <onboarding@resend.dev>")
+
 	s := store.NewAuthStore(sharedDB)
-	tokenizer := myjwt.NewJWTTokenizer("MY_SECRET")
-	b := business.NewAuthBusiness(s, tokenizer)
+	tokenizer := myjwt.NewJWTTokenizer(secrets.JWT_SECRET_KEY)
+	b := business.NewAuthBusiness(s, tokenizer, m)
 	return &ServiceAuth{b: b}, nil
 }
 
@@ -36,22 +54,4 @@ func World(ctx context.Context, name string) (*Response, error) {
 
 type Response struct {
 	Message string
-}
-
-//encore:api public method=POST path=/auth/login
-func (s *ServiceAuth) Login(ctx context.Context, req *RequestLogin) (*ResponseLogin, error) {
-	token, err := s.b.Login(ctx, req.Email, req.Password)
-	if err != nil {
-		return nil, err
-	}
-	return &ResponseLogin{Token: token}, nil
-}
-
-type RequestLogin struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type ResponseLogin struct {
-	Token string `json:"token"`
 }

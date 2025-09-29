@@ -1,0 +1,61 @@
+
+/* My companies styles*/
+
+
+.companiesContainer {
+    display: grid;
+    gap: 12px;
+    row-gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 1150px) {
+    .companiesContainer {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media (max-width: 950px) {
+    .companiesContainer {
+        grid-template-columns: auto;
+    }
+}
+
+.cardCompany {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px 16px;
+    width: 100%;
+    box-shadow: var(--shadow);
+    transition: border-color 0.1s ease;
+    
+}
+
+.cardCompanyHeader {
+    margin-bottom: 8px;
+}
+
+.headerTopCompany {
+    display: flex;
+    gap: 4px;
+}
+
+.nameOrg {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+
+.cardCompany:hover {
+    border-color: #ddd;
+    box-shadow: var(--shadow-2);
+}
+
+.cardCompanyHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+
+

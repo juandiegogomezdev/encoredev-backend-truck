@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+>
+</head>
+<body>
+    <script src="config.js"></script>
+    <main>
+        <div id="formContainer">
+            <h2>Crear contrasenia</h2>
+
+            <div class="errorMessage">Error message</div>
+            
+            <form id="confirmForm">
+                <div class="form-group">
+                    <label for="password1">Contrasenia</label>
+                    <input type="password" id="password1" required placeholder="*********" >
+                </div>
+                <div class="form-group">
+                    <label for="password2">Confirmar contrasenia</label>
+                    <input type="password" id="password2" required placeholder="*********">
+                </div>
+                <button type="submit">Crear</button>
+            </form>
+            <h4>Requisitos de la contrasenia</h4>
+            <ul>
+                <li><i class="fa-solid fa-circle-xmark" id="check-length"></i>Minimo 8 letras</li>
+                <li><i class="fa-solid fa-circle-xmark" id="check-uppercase"></i>Al menos una letra mayuscula</li>
+                <li><i class="fa-solid fa-circle-xmark" id="check-lowercase"></i>Al menos una letra minuscula</li>
+                <li><i class="fa-solid fa-circle-xmark" id="check-number"></i>Al menos un numero</li>
+                <li><i class="fa-solid fa-circle-xmark" id="check-special"></i>Al menos un caracter especial</li>
+            </ul>
+        </div>
+
+        <div id="errorContainer">
+            <h2>Error!</h2>
+            <div id="errorMessageFetch"></div>
+        </div>
+        
+        <div id="successContainer">
+            <h2 id="successMessage">Correo confirmado.</h2>
+            <p>Ingresa aqui: <strong><a id='loginLink' >Click aqui!</a></strong></p>
+        </div>
+
+
+       
+        
+    </main>
+
+    <script>
+        const loginLink = document.getElementById('loginLink')
+        loginLink.href = window.APP_CONFIG.url_login
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

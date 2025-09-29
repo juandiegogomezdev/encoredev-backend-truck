@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planillas camiones</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="./config.js"></script>
+    <main>
+        <div id="formContainer">
+            <div id = 'login'>
+                <h2>Iniciar Sesion</h2>
+                <div class="errorMessage"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="example@gmail.com.co" required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contrasenia</label>
+                        <input type="password" id="password" required >
+                    </div>
+                    <button type="submit">Iniciar sesion</button>
+                </form>
+
+            </div>
+
+            <p class="crearCuenta">No tienes cuenta? <a id='registerLink'>Crear aqui !</a></p>
+
+            
+        </div>
+        
+    </main>
+    <script>
+        const registerLink = document.getElementById('registerLink')
+        registerLink.href = window.APP_CONFIG.page_url_register
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

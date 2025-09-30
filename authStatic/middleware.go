@@ -2,44 +2,49 @@ package authstatic
 
 import (
 	"fmt"
+	"strings"
 
 	"encore.dev/middleware"
 )
 
 //encore:middleware target=tag:static
-func StaticFilesMiddleware(req middleware.Request, next middleware.Next) middleware.Response {
-	fmt.Println("Serving static file:", req.Data().Path)
+func (s *AuthStaticService) StaticFilesMiddleware(req middleware.Request, next middleware.Next) middleware.Response {
+	// fmt.Println("Serving static file:", req.Data())
+	data := req.Data()
+
+	// If files end (.js, .css). In this case pass to the handler/endpoint function
+	path := data.Path
+	if strings.HasSuffix(path, ".js") || strings.HasSuffix(path, ".css") {
+		return next(req)
+	}
+
+	// Get the cookie from the request header
+	cookie := data.Headers.Get("Cookie")
+	parseCookies
+
+	// If the file url end with /org-select
+	endPath := strings.TrimPrefix(path, "/static/")
+
+	switch endPath {
+	case "org-select/":
+	case "confirm-login/":
+	case ""
+	}
+
+	if strings.HasPrefix(endPath, "org-select") {
+		// Check if has access_token cookie
+		return next(req)
+	}
+
+	// Check if has the auth_token cookie
+	token := data.Headers.Get("Cookie")
+	if token == "" {
+		fmt.Println("No auth_token cookie found")
+	} else {
+		fmt.Println("auth_token cookie found:", token)
+	}
+
 	resp := next(req)
 
 	return resp
 }
-
-// //encore:middleware
-// func AuthMiddleware(req middleware.Request, next middleware.Next) middleware.Response {
-// 	// Obtener la cookie del request
-// 	cookie, err := req.Data().Headers.Get("Cookie")
-// 	// if err != nil {
-// 	// 	rlog.Info("Cookie no encontrada", "error", err)
-// 	// 	return middleware.Response{
-// 	// 		HTTPStatus: http.StatusUnauthorized,
-// 	// 		Err:        ErrMissingCookie,
-// 	// 	}
-// 	// }
-
-// 	// // Validar la cookie
-// 	// cookieData, err := validateCookie(cookie.Value)
-// 	// if err != nil {
-// 	// 	rlog.Info("Cookie inválida", "error", err)
-// 	// 	return middleware.Response{
-// 	// 		HTTPStatus: http.StatusUnauthorized,
-// 	// 		Err:        err,
-// 	// 	}
-// 	// }
-
-// 	// // Agregar los datos del usuario al contexto
-// 	// ctx := context.WithValue(req.Context(), "user_data", cookieData)
-// 	// req = req.WithContext(ctx)
-
-// 	// // Continuar con el siguiente middleware/handler
-// 	return next(req)
-// }

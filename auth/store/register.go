@@ -26,7 +26,7 @@ func (s *AuthStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct,
 	}
 
 	qUser := `
-		INSERT INTO Users (id, email, hashed_password, created_at)
+		INSERT INTO users (id, email, hashed_password, created_at)
 		VALUES ($1, $2, $3, $4)`
 	_, err = tx.Exec(ctx, qUser, user.ID, user.Email, user.HashedPassword, user.CreatedAt)
 
@@ -36,7 +36,7 @@ func (s *AuthStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct,
 	}
 
 	qVerification := `
-		INSERT INTO user_verifications (user_id, code, created_at, expires_at)
+		INSERT INTO user_login_codes (user_id, code, created_at, expires_at)
 		VALUES ($1, $2, $3, $4)`
 
 	_, err = tx.Exec(ctx, qVerification, verification.UserID, verification.Code, verification.CreatedAt, verification.ExpiresAt)

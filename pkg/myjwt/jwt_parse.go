@@ -59,11 +59,19 @@ func (t *jwtTokenizer) ParseMembershipToken(tokenString string) (*MembershipClai
 	return parsedClaims.(*MembershipClaims), nil
 }
 
-// Parse anyone token and return the claims
-func (t *jwtTokenizer) ParseFullClaims(tokenString string) (*FullClaims, error) {
-	parsedClaims, err := t.parseToken(tokenString, &FullClaims{})
+func (t *jwtTokenizer) ParseBaseClaims(tokenString string) (*BaseClaims, error) {
+	parsedClaims, err := t.parseToken(tokenString, &BaseClaims{})
 	if err != nil {
 		return nil, err
 	}
-	return parsedClaims.(*FullClaims), nil
+	return parsedClaims.(*BaseClaims), nil
 }
+
+// // Parse anyone token and return the claims
+// func (t *jwtTokenizer) ParseFullClaims(tokenString string) (*FullClaims, error) {
+// 	parsedClaims, err := t.parseToken(tokenString, &FullClaims{})
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return parsedClaims.(*FullClaims), nil
+// }

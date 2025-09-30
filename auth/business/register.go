@@ -41,20 +41,21 @@ func (b *BusinessAuth) CheckUserExists(ctx context.Context, email string) error 
 }
 
 // Send email with token to confirm registration
-func (b *BusinessAuth) SendConfirmRegisterEmail(ctx context.Context, email string) (string, error) {
-	token, err := b.tokenizer.GenerateConfirmRegisterToken(email)
-	if err != nil {
-		return "", err
-	}
-
+func (b *BusinessAuth) SendConfirmRegisterEmail(ctx context.Context, email string, token string) {
 	// Send email with the token (using the mailer)
+
+	body := fmt.Sprint(`
+		<h1> Bienvenido </h1>
+		<p> Gracias por registrarte. Por favor, confirma tu correo electrónico haciendo clic en el siguiente enlace: </p>
+		<a href="` + "http://localhost:4000/static/confirm-register?token=" + token + `"> Confirmar correo </a>
+		<p> Si no te has registrado, ignora este correo. </p>
+	`)
+
+	// TODO: Improve error handling
 	go func() {
-		b.mailer.Send(
-			email, "Confirm your registration",
-			fmt.Sprintf(`Abre el siguiente link: <a href="http://localhost:4000/static/confirm-register?token=%s"> Click here! </a>`, token))
+		b.mailer.Send(email, "Confirm your registration", body)
 	}()
 
-	return token, nil
 }
 
 // Create user in the database

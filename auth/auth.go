@@ -2,7 +2,6 @@
 package auth
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -50,31 +49,4 @@ func initServiceAuth() (*ServiceAuth, error) {
 type MyAuthParams struct {
 	AuthToken     *http.Cookie `cookie:"auth_token"`
 	Authorization string       `header:"Authorization"`
-}
-
-func GetClientTypeFromRequest(r *http.Request) string {
-	clientHeader := r.Header.Get("X-Client-Type")
-
-	// Validar que sea uno de los valores esperados
-	if clientHeader == "web" || clientHeader == "mobile" {
-		return clientHeader
-	}
-
-	// Fallback por si no envían el header (útil para debugging)
-	return "web" // o podrías retornar error si quieres forzar el header
-}
-
-// //encore:authhandler
-// func AuthHandler(ctx context.Context, p *MyAuthParams) (context.Context, error) {
-// 	fmt.Println("AuthHandler called with params:", p)
-// }
-
-//encore:api public path=/saludo/:name
-func World(ctx context.Context, name string) (*Response, error) {
-	msg := "Hello you are logging in, " + name + "!"
-	return &Response{Message: msg}, nil
-}
-
-type Response struct {
-	Message string
 }

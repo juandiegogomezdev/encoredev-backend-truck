@@ -16,8 +16,9 @@ type JWTTokenizer interface {
 
 	// Parsing
 	parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, error)
-	ParseFullClaims(tokenString string) (*FullClaims, error)
+	// ParseFullClaims(tokenString string) (*FullClaims, error)
 
+	ParseBaseClaims(tokenString string) (*BaseClaims, error)
 	ParseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, error)
 	ParseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, error)
 	ParseOrgSelectToken(tokenString string) (*OrgSelectClaims, error)
@@ -39,6 +40,7 @@ const (
 	TokenTypeConfirmLogin    TokenType = "confirm_login"
 	TokenTypeOrgSelect       TokenType = "org_select"
 	TokenTypeMembership      TokenType = "membership"
+	TokenTypeUnknown
 )
 
 // BaseClaims holds common JWT claims.

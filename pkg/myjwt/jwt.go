@@ -16,12 +16,12 @@ type JWTTokenizer interface {
 
 	// Parsing
 	parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, error)
-	parseFullClaims(tokenString string) (*FullClaims, error)
+	ParseFullClaims(tokenString string) (*FullClaims, error)
 
-	parseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, error)
-	parseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, error)
-	parseOrgSelectToken(tokenString string) (*OrgSelectClaims, error)
-	parseMembershipToken(tokenString string) (*MembershipClaims, error)
+	ParseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, error)
+	ParseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, error)
+	ParseOrgSelectToken(tokenString string) (*OrgSelectClaims, error)
+	ParseMembershipToken(tokenString string) (*MembershipClaims, error)
 }
 
 type jwtTokenizer struct {

@@ -13,13 +13,13 @@ func (s *AuthStore) UserExistsByEmail(ctx context.Context, email string) (bool, 
 	q := "SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)"
 	err := s.db.QueryRow(ctx, q, email).Scan(&exists)
 	if err != nil {
-		return false, err
+		return true, err
 	}
 	return exists, nil
 }
 
 // Create a new user in the database
-func (s *AuthStore) CreateUser(ctx context.Context, user *createUser, verification *createUserVerification) error {
+func (s *AuthStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct, verification *CreateUserVerificationStruct) error {
 	tx, err := s.db.Begin(ctx)
 	if err != nil {
 		return err
@@ -52,14 +52,14 @@ func (s *AuthStore) CreateUser(ctx context.Context, user *createUser, verificati
 
 }
 
-type createUser struct {
+type CreateUserStoreStruct struct {
 	ID             uuid.UUID
 	Email          string
 	HashedPassword string
 	CreatedAt      time.Time
 }
 
-type createUserVerification struct {
+type CreateUserVerificationStruct struct {
 	UserID    uuid.UUID
 	Code      string
 	CreatedAt time.Time

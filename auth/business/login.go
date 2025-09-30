@@ -7,14 +7,9 @@ import (
 
 	"encore.dev/beta/errs"
 	"encore.dev/storage/sqldb"
-	"golang.org/x/crypto/bcrypt"
 )
 
-// Validate if the provided password matches the stored hash.
-func (b *BusinessAuth) validatePassword(storedHash, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password))
-	return err == nil
-}
+//
 
 // Login authenticates a user and returns a JWT token with his email if successful.
 func (b *BusinessAuth) Login(ctx context.Context, email string, password string) (string, error) {

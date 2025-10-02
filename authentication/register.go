@@ -60,7 +60,10 @@ func (s *ServiceAuth) ConfirmUserRegister(ctx context.Context, req *RequestConfi
 	}
 
 	// Generate login token
-	token, err := sessions.GenerateOrgAccessToken(ctx, userID)
+	resCreateOrgSelectSession, err := sessions.CreateOrgSelectSession(ctx, sessions.RequestCreateOrgSelectSession{
+		UserID:     userID,
+		DeviceInfo: "device info", // TODO: Get device info from request header
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -72,13 +75,13 @@ func (s *ServiceAuth) ConfirmUserRegister(ctx context.Context, req *RequestConfi
 		// Return token in response body
 		return &ResponseConfirmRegister{
 			Message: "Usuario registrado correctamente",
-			Token:   token,
+			Token:   resCreateOrgSelectSession.OrgSelectSessionToken,
 		}, nil
 
 	}
 
 	// If is web, return token in HttpOnly cookie
-	cookieOptions := utils.DefaultCookieOptions("auth_token", token)
+	cookieOptions := utils.DefaultCookieOptions("auth_token", resCreateOrgSelectSession.OrgSelectSessionToken)
 	return &ResponseConfirmRegister{
 		Message:   "Usuario registrado correctamente",
 		Token:     "",
@@ -90,7 +93,7 @@ type RequestConfirmRegisterUser struct {
 	// Body params
 	Password string `json:"password"`
 	// Query param
-	Token string `query:"token"`
+	Token string `json:"token"`
 	// header param for client type (web or mobile)
 	ClientType string `header:"X-Client-Type"`
 }

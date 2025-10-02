@@ -6,20 +6,36 @@ import (
 	"time"
 
 	"encore.app/authentication/store"
+	"encore.app/pkg/myjwt"
 	"encore.dev/beta/errs"
 	"encore.dev/types/uuid"
 )
 
 // This function extracts the new email from the provided token.
 func (b *BusinessAuth) ExtractNewEmailFromToken(ctx context.Context, token string) (string, error) {
-	claims, err := b.tokenizer.ParseConfirmRegisterToken(token)
-	if err != nil {
+	fmt.Println("Extracting new email from token:", token)
+	claims, tokenStatus := b.tokenizer.ParseConfirmRegisterToken(token)
+	fmt.Println("token", claims)
+	switch tokenStatus {
+	case myjwt.TokenStatusValid:
+		// Token is valid, proceed
+		return claims.NewEmail, nil
+	case myjwt.TokenStatusExpired:
 		return "", &errs.Error{
-			Code:    errs.InvalidArgument,
-			Message: "Link de confirmacion inválido o vencido",
+			Code:    errs.Unauthenticated,
+			Message: "El link de confirmación ha expirado. Por favor, regístrate de nuevo.",
+		}
+	case myjwt.TokenStatusInvalid:
+		return "", &errs.Error{
+			Code:    errs.Unauthenticated,
+			Message: "Link de confirmación inválido. Por favor, verifica el enlace o solicita uno nuevo.",
+		}
+	default:
+		return "", &errs.Error{
+			Code:    errs.Internal,
+			Message: "Error al procesar el token de confirmación.",
 		}
 	}
-	return claims.NewEmail, nil
 }
 
 // Check if the user exists

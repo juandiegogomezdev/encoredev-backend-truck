@@ -1,5 +1,11 @@
 package business
 
+import (
+	"fmt"
+
+	"encore.dev/beta/errs"
+)
+
 // // GenerateOrgAccessToken creates a new session for the user and returns a JWT token for accessing the API.
 // func (b *BusinessAuth) GenerateOrgAccessToken(ctx context.Context, userID uuid.UUID) (string, error) {
 // 	// TODO get device info from request
@@ -47,14 +53,14 @@ package business
 // 	return generatedToken, nil
 // }
 
-// func (b *BusinessAuth) GenerateConfirmRegisterToken(newEmail string) (string, error) {
-// 	claims, err := b.tokenizer.GenerateConfirmRegisterToken(newEmail)
-// 	if err != nil {
-// 		fmt.Println("Error generating confirm register token:", err)
-// 		return "", &errs.Error{
-// 			Code:    errs.Internal,
-// 			Message: "Error al generar el token de confirmación",
-// 		}
-// 	}
-// 	return claims, nil
-// }
+func (b *BusinessAuth) GenerateConfirmRegisterToken(newEmail string) (string, error) {
+	claims, err := b.tokenizer.GenerateConfirmRegisterToken(newEmail)
+	if err != nil {
+		fmt.Println("Error generating confirm register token:", err)
+		return "", &errs.Error{
+			Code:    errs.Internal,
+			Message: "Error al generar el token de confirmación",
+		}
+	}
+	return claims, nil
+}

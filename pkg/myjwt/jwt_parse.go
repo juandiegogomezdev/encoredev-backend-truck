@@ -1,77 +1,112 @@
 package myjwt
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (t *jwtTokenizer) parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, error) {
+type TokenStatus int
+
+const (
+	TokenStatusValid TokenStatus = iota
+	TokenStatusExpired
+	TokenStatusInvalid
+)
+
+func (t *jwtTokenizer) parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, TokenStatus) {
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(t.secretKey), nil
 	}, jwt.WithValidMethods([]string{"HS256"}))
 
 	if err != nil {
-		return nil, fmt.Errorf("error parsing token: %w", err)
+		switch {
+		case errors.Is(err, jwt.ErrTokenExpired):
+			return token.Claims, TokenStatusExpired
+		case errors.Is(err, jwt.ErrTokenMalformed),
+			errors.Is(err, jwt.ErrTokenSignatureInvalid),
+			errors.Is(err, jwt.ErrTokenNotValidYet),
+			errors.Is(err, jwt.ErrTokenInvalidClaims):
+
+			fmt.Println("Error parsing token:", err)
+			return nil, TokenStatusInvalid
+		default:
+			return nil, TokenStatusInvalid
+		}
 	}
 
 	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return nil, TokenStatusInvalid
 	}
-	return token.Claims, nil
+
+	return token.Claims, TokenStatusValid
 
 }
 
 // Parse the token for confirm login
-func (t *jwtTokenizer) ParseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, error) {
-	parsedClaims, err := t.parseToken(tokenString, &ConfirmLoginClaims{})
-	if err != nil {
-		return nil, err
+func (t *jwtTokenizer) ParseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, TokenStatus) {
+	parsedClaims, tokenStatus := t.parseToken(tokenString, &ConfirmLoginClaims{})
+
+	switch tokenStatus {
+	case TokenStatusInvalid:
+		return nil, TokenStatusInvalid
+	default:
+		return parsedClaims.(*ConfirmLoginClaims), tokenStatus
 	}
-	return parsedClaims.(*ConfirmLoginClaims), nil
 }
 
 // Parse the token for confirm register
-func (t *jwtTokenizer) ParseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, error) {
-	parsedClaims, err := t.parseToken(tokenString, &ConfirmRegisterClaims{})
-	if err != nil {
-		return nil, err
+func (t *jwtTokenizer) ParseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, TokenStatus) {
+	parsedClaims, tokenStatus := t.parseToken(tokenString, &ConfirmRegisterClaims{})
+	switch tokenStatus {
+	case TokenStatusInvalid:
+		return nil, TokenStatusInvalid
+	default:
+		return parsedClaims.(*ConfirmRegisterClaims), tokenStatus
 	}
-	return parsedClaims.(*ConfirmRegisterClaims), nil
 }
 
 // Parse the token for organization selection
-func (t *jwtTokenizer) ParseOrgSelectToken(tokenString string) (*OrgSelectClaims, error) {
-	parsedClaims, err := t.parseToken(tokenString, &OrgSelectClaims{})
-	if err != nil {
-		return nil, err
+func (t *jwtTokenizer) ParseOrgSelectToken(tokenString string) (*OrgSelectClaims, TokenStatus) {
+	parsedClaims, tokenStatus := t.parseToken(tokenString, &OrgSelectClaims{})
+	switch tokenStatus {
+	case TokenStatusInvalid:
+		return nil, TokenStatusInvalid
+	default:
+		return parsedClaims.(*OrgSelectClaims), tokenStatus
 	}
-	return parsedClaims.(*OrgSelectClaims), nil
 }
 
 // Parse the token for membership
-func (t *jwtTokenizer) ParseMembershipToken(tokenString string) (*MembershipClaims, error) {
-	parsedClaims, err := t.parseToken(tokenString, &MembershipClaims{})
-	if err != nil {
-		return nil, err
+func (t *jwtTokenizer) ParseMembershipToken(tokenString string) (*MembershipClaims, TokenStatus) {
+	parsedClaims, tokenStatus := t.parseToken(tokenString, &MembershipClaims{})
+	switch tokenStatus {
+	case TokenStatusInvalid:
+		return nil, TokenStatusInvalid
+	default:
+		return parsedClaims.(*MembershipClaims), tokenStatus
 	}
-	return parsedClaims.(*MembershipClaims), nil
 }
 
-func (t *jwtTokenizer) ParseBaseClaims(tokenString string) (*BaseClaims, error) {
-	parsedClaims, err := t.parseToken(tokenString, &BaseClaims{})
-	if err != nil {
-		return nil, err
+func (t *jwtTokenizer) ParseBaseClaims(tokenString string) (*BaseClaims, TokenStatus) {
+	parsedClaims, tokenStatus := t.parseToken(tokenString, &BaseClaims{})
+	switch tokenStatus {
+	case TokenStatusInvalid:
+		return nil, TokenStatusInvalid
+	default:
+		return parsedClaims.(*BaseClaims), tokenStatus
 	}
-	return parsedClaims.(*BaseClaims), nil
 }
 
-// // Parse anyone token and return the claims
-// func (t *jwtTokenizer) ParseFullClaims(tokenString string) (*FullClaims, error) {
-// 	parsedClaims, err := t.parseToken(tokenString, &FullClaims{})
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return parsedClaims.(*FullClaims), nil
-// }
+// Parse anyone token and return the claims
+func (t *jwtTokenizer) ParseFullClaims(tokenString string) (*FullClaims, TokenStatus) {
+	parsedClaims, tokenStatus := t.parseToken(tokenString, &FullClaims{})
+	switch tokenStatus {
+	case TokenStatusInvalid:
+		return nil, TokenStatusInvalid
+	default:
+		return parsedClaims.(*FullClaims), tokenStatus
+	}
+}

@@ -15,14 +15,15 @@ type JWTTokenizer interface {
 	GenerateMembershipToken(membershipID uuid.UUID, sessionID uuid.UUID) (string, error)
 
 	// Parsing
-	parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, error)
+	parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, TokenStatus)
 	// ParseFullClaims(tokenString string) (*FullClaims, error)
 
-	ParseBaseClaims(tokenString string) (*BaseClaims, error)
-	ParseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, error)
-	ParseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, error)
-	ParseOrgSelectToken(tokenString string) (*OrgSelectClaims, error)
-	ParseMembershipToken(tokenString string) (*MembershipClaims, error)
+	ParseBaseClaims(tokenString string) (*BaseClaims, TokenStatus)
+	ParseConfirmRegisterToken(tokenString string) (*ConfirmRegisterClaims, TokenStatus)
+	ParseConfirmLoginToken(tokenString string) (*ConfirmLoginClaims, TokenStatus)
+	ParseOrgSelectToken(tokenString string) (*OrgSelectClaims, TokenStatus)
+	ParseMembershipToken(tokenString string) (*MembershipClaims, TokenStatus)
+	ParseFullClaims(tokenString string) (*FullClaims, TokenStatus)
 }
 
 type jwtTokenizer struct {

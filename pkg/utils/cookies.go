@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -29,6 +30,17 @@ func DefaultCookieOptions(name, value string) string {
 
 func DeleteDefaultCookieOptions(name string) string {
 	return fmt.Sprintf("%s=; Path=/; Expires=%s; Max-Age=-1; HttpOnly; SameSite=Strict", name, time.Unix(0, 0).Format(time.RFC1123))
+}
+
+func DeleteDefaultCookieOptions2(name string) *http.Cookie {
+	return &http.Cookie{
+		Name:     name,
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	}
 }
 
 // This delete the cookie created with DefaultCookieOptions

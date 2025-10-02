@@ -5,8 +5,10 @@ import (
 	"net/http"
 
 	"encore.app/pkg/myjwt"
+	"encore.app/pkg/utils"
 	"encore.app/sessions/business"
 	"encore.app/sessions/store"
+	"encore.dev/beta/errs"
 	"encore.dev/storage/sqldb"
 	"encore.dev/types/uuid"
 )
@@ -35,34 +37,95 @@ func initServiceSessions() (*ServiceSessions, error) {
 }
 
 //encore:api private method=POST path=/sessions/org-select
-func (s *ServiceSessions) CreateOrgSelectSession(ctx context.Context, userID uuid.UUID, deviceInfo string) (string, error) {
-	orgSessionToken, err := s.b.CreateOrgSelectSession(ctx, userID, deviceInfo)
+func (s *ServiceSessions) CreateOrgSelectSession(ctx context.Context, req RequestCreateOrgSelectSession) (responseCreateOrgSelectSession, error) {
+	orgSessionToken, err := s.b.CreateOrgSelectSession(ctx, req.UserID, req.DeviceInfo)
 	if err != nil {
-		return "", err
+		return responseCreateOrgSelectSession{}, err
 	}
-	return orgSessionToken, nil
+	return responseCreateOrgSelectSession{
+		OrgSelectSessionToken: orgSessionToken,
+	}, nil
+}
+
+type RequestCreateOrgSelectSession struct {
+	UserID     uuid.UUID `json:"user_id"`
+	DeviceInfo string    `json:"device_info"`
+}
+
+type responseCreateOrgSelectSession struct {
+	OrgSelectSessionToken string `json:"org_select_session_token"`
 }
 
 //encore:api private method=POST path=/session/membership
-func (s *ServiceSessions) CreateMembershipSession(ctx context.Context, membershipID, sessionID uuid.UUID) (string, error) {
-	membershipSessionToken, err := s.b.CreateMembershipSession(ctx, membershipID, sessionID)
+func (s *ServiceSessions) CreateMembershipSession(ctx context.Context, req RequestCreateMembershipSession) (responseCreateMembershipSession, error) {
+	membershipSessionToken, err := s.b.CreateMembershipSession(ctx, req.MembershipID, req.SessionID)
 	if err != nil {
-		return "", err
+		return responseCreateMembershipSession{}, err
 	}
-	return membershipSessionToken, nil
+	return responseCreateMembershipSession{
+		MembershipSessionToken: membershipSessionToken,
+	}, nil
 }
 
-//encore:api public method=DELETE path=/session
-func (s *ServiceSessions) DeleteWebUserSession(ctx context.Context, req requestDeleteSession) error {
-	// Check if the cookie is valid
-	if req.CookieToken.Value == "" {
-		return &http.ProtocolError{ErrorString: "No auth_token cookie provided"}
-	}
+type RequestCreateMembershipSession struct {
+	MembershipID uuid.UUID `json:"membership_id"`
+	SessionID    uuid.UUID `json:"session_id"`
+}
+
+type responseCreateMembershipSession struct {
+	MembershipSessionToken string `json:"membership_session_token"`
+}
+
+//encore:api public method=POST path=/session/delete/web
+func (s *ServiceSessions) DeleteWebUserSession(ctx context.Context, req requestDeleteSessionWeb) (responseDeleteSessionWeb, error) {
+	// Generate the expired cookie to delete the cookie in the browser
+	deleteCookie := utils.DeleteDefaultCookieOptions("auth_token")
+
+	// Delete the session in a goroutine to not block the response
+	go func() {
+		// Check if the cookie is valid
+		if req.SessionCookie == nil || req.SessionCookie.Value == "" {
+			return
+		}
+		s.b.DeleteUserSession(ctx, req.SessionCookie.Value)
+	}()
+
+	return responseDeleteSessionWeb{
+		SessionCookie: deleteCookie,
+	}, nil
 
 }
 
-type requestDeleteSession struct {
-	CookieToken http.Cookie `cookie:"auth_token"`
+// Request struct to get the cookie from the request
+type requestDeleteSessionWeb struct {
+	SessionCookie *http.Cookie `cookie:"auth_token"`
+}
+
+// Set the expired cookie in the response header
+type responseDeleteSessionWeb struct {
+	SessionCookie string `header:"Set-Cookie"`
+}
+
+//encore:api public method=POST path=/session/delete/mobile
+func (s *ServiceSessions) DeleteMobileSession(ctx context.Context, req requestDeleteSessionMobile) (responseDeleteMobileSession, error) {
+	if req.Authorization == "" {
+		return responseDeleteMobileSession{}, &errs.Error{
+			Code:    errs.Unauthenticated,
+			Message: "No se puede cerrar sesión.",
+		}
+	}
+
+	return responseDeleteMobileSession{
+		Success: true,
+	}, nil
+}
+
+type requestDeleteSessionMobile struct {
+	Authorization string `header:"Authorization"`
+}
+
+type responseDeleteMobileSession struct {
+	Success bool `json:"success"`
 }
 
 // //encore:api private method=POST path=/sessions

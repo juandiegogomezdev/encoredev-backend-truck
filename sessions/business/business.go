@@ -21,7 +21,7 @@ func NewBusinessSession(store *store.SessionStore, tokenizer myjwt.JWTTokenizer)
 	return &BusinessSession{store: store, tokenizer: tokenizer}
 }
 
-// Check if is posible create a new session
+// Check if is posible create a new session and return the new session ID
 func (b *BusinessSession) isPosibleCreateNewSession(ctx context.Context, userID uuid.UUID) (uuid.UUID, error) {
 	// Count active sessions for the user
 	count, err := b.store.CountSessionsByUserID(ctx, userID)
@@ -96,16 +96,23 @@ func (b *BusinessSession) CreateMembershipSession(ctx context.Context, membershi
 	return tokenMembership, nil
 }
 
-func (b *BusinessSession) DeleteUserSession(ctx context.Context, sessionID uuid.UUID) error {
-	err := b.store.DeleteUserSession(ctx, sessionID)
-	if err != nil {
-		fmt.Println("Error deleting user session:", err)
-		return &errs.Error{
-			Code:    errs.Internal,
-			Message: "Error al eliminar la sesión",
+// Delete the user session of the database.
+func (b *BusinessSession) DeleteUserSession(ctx context.Context, tokenSession string) {
+	// Parse the token to get the session ID
+	claims, tokenStatus := b.tokenizer.ParseFullClaims(tokenSession)
+
+	switch tokenStatus {
+	case myjwt.TokenStatusValid, myjwt.TokenStatusExpired:
+		sessionID := claims.SessionID
+		err := b.store.DeleteUserSession(ctx, sessionID)
+		if err != nil {
+			// TODO : log the error
+			fmt.Println("Error deleting user session:", err)
 		}
+
+	default:
+		fmt.Println("Invalid token:", tokenStatus)
 	}
-	return nil
 }
 
 // Check if a session is expired (Refresh token)

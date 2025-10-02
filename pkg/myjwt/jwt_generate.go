@@ -51,9 +51,10 @@ func (t *jwtTokenizer) GenerateConfirmLoginToken(email string) (string, error) {
 }
 
 // This token is used to select an organization after login.
-func (t *jwtTokenizer) GenerateOrgSelectToken(userID uuid.UUID) (string, error) {
+func (t *jwtTokenizer) GenerateOrgSelectToken(userID uuid.UUID, sessionID uuid.UUID) (string, error) {
 	claims := OrgSelectClaims{
-		UserID: userID,
+		UserID:    userID,
+		SessionID: sessionID,
 		BaseClaims: BaseClaims{
 			TokenType: TokenTypeOrgSelect,
 			RegisteredClaims: jwt.RegisteredClaims{
@@ -66,9 +67,10 @@ func (t *jwtTokenizer) GenerateOrgSelectToken(userID uuid.UUID) (string, error) 
 }
 
 // This token is used to access the api as a member of an organization.
-func (t *jwtTokenizer) GenerateMembershipToken(membershipID uuid.UUID) (string, error) {
+func (t *jwtTokenizer) GenerateMembershipToken(membershipID uuid.UUID, sessionID uuid.UUID) (string, error) {
 	claims := MembershipClaims{
 		MembershipID: membershipID,
+		SessionID:    sessionID,
 		BaseClaims: BaseClaims{
 			TokenType: TokenTypeMembership,
 			RegisteredClaims: jwt.RegisteredClaims{

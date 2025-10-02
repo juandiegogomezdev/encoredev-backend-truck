@@ -1,19 +1,19 @@
 // Service auth implements user login and register functionality.
-package auth
+package authentication
 
 import (
 	"fmt"
 	"net/http"
 
-	"encore.app/auth/business"
-	"encore.app/auth/store"
+	"encore.app/authentication/business"
+	"encore.app/authentication/store"
 	"encore.app/pkg/myjwt"
 	"encore.app/pkg/resendmailer"
 	"encore.dev/config"
 	"encore.dev/storage/sqldb"
 )
 
-var sharedDB = sqldb.NewDatabase("shareddb", sqldb.DatabaseConfig{
+var sharedDB = sqldb.NewDatabase("db_authentication", sqldb.DatabaseConfig{
 	Migrations: "./migrations",
 })
 
@@ -34,6 +34,7 @@ type ServiceAuth struct {
 }
 
 func initServiceAuth() (*ServiceAuth, error) {
+
 	fmt.Println("secrets.JWT_SECRET_KEY:", secrets.JWT_SECRET_KEY)
 	fmt.Println("cfg", cfg.BaseUrl)
 

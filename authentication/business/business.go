@@ -3,7 +3,7 @@ package business
 import (
 	"math/rand"
 
-	"encore.app/auth/store"
+	"encore.app/authentication/store"
 	"encore.app/pkg/myjwt"
 	"encore.app/pkg/resendmailer"
 	"golang.org/x/crypto/bcrypt"

@@ -31,7 +31,7 @@ var dist embed.FS
 
 var assets, _ = fs.Sub(dist, "dist")
 
-//encore:api public raw path=/static/org-select tag:static
+//encore:api public raw path=/static/*path tag:static
 func (s *AuthStaticService) ServeOrgSelect(w http.ResponseWriter, req *http.Request) {
 	//
 	// Verificacion diferentes al archivo endpoint de abajo
@@ -62,21 +62,25 @@ func (s *AuthStaticService) ServeOrgSelect(w http.ResponseWriter, req *http.Requ
 	}
 
 	switch tokenType {
+	case myjwt.TokenTypeUnknown:
+		if strings.HasSuffix(url, "org-select/") || strings.HasSuffix(url, "app/") {
+			http.Redirect(w, req, "http://localhost:4000/static/login", http.StatusSeeOther)
+			return
+		}
+	case myjwt.TokenTypeOrgSelect:
+		if !strings.HasPrefix(url, "org-select") {
+			http.Redirect(w, req,
+				"http://localhost:8080/static/org-select/", http.StatusFound)
+			return
+		}
+	case myjwt.TokenTypeMembership:
+		if !strings.HasPrefix(url, "app/") {
+			http.Redirect(w, req,
+				"http://localhost:8080/static/app/", http.StatusFound)
 
-	}
-
-	if err != nil {
-		http.Redirect(w, req, "/static/login", http.StatusSeeOther)
-		return
+			return
+		}
 	}
 
 	s.staticHandler.ServeHTTP(w, req)
 }
-
-//encore:api public raw path=/static/*path tag:static
-func (s *AuthStaticService) ServeStatic(w http.ResponseWriter, req *http.Request) {
-	//
-	s.staticHandler.ServeHTTP(w, req)
-}
-
-//encore:api public path=/static/*path

@@ -11,8 +11,8 @@ type JWTTokenizer interface {
 
 	GenerateConfirmRegisterToken(newEmail string) (string, error)
 	GenerateConfirmLoginToken(email string) (string, error)
-	GenerateOrgSelectToken(userID uuid.UUID) (string, error)
-	GenerateMembershipToken(membershipID uuid.UUID) (string, error)
+	GenerateOrgSelectToken(userID uuid.UUID, sessionID uuid.UUID) (string, error)
+	GenerateMembershipToken(membershipID uuid.UUID, sessionID uuid.UUID) (string, error)
 
 	// Parsing
 	parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, error)
@@ -40,7 +40,7 @@ const (
 	TokenTypeConfirmLogin    TokenType = "confirm_login"
 	TokenTypeOrgSelect       TokenType = "org_select"
 	TokenTypeMembership      TokenType = "membership"
-	TokenTypeUnknown
+	TokenTypeUnknown         TokenType = "unknown"
 )
 
 // BaseClaims holds common JWT claims.
@@ -63,13 +63,15 @@ type ConfirmLoginClaims struct {
 
 // Used for allow selecting an organization
 type OrgSelectClaims struct {
-	UserID uuid.UUID `json:"user_id"`
+	UserID    uuid.UUID `json:"user_id"`
+	SessionID uuid.UUID `json:"session_id"`
 	BaseClaims
 }
 
 // Used for use the app as a member of an organization
 type MembershipClaims struct {
 	MembershipID uuid.UUID `json:"membership_id"`
+	SessionID    uuid.UUID `json:"session_id"`
 	BaseClaims
 }
 
@@ -80,5 +82,6 @@ type FullClaims struct {
 	Email        string    `json:"email"`
 	UserID       uuid.UUID `json:"user_id"`
 	MembershipID uuid.UUID `json:"membership_id"`
+	SessionID    uuid.UUID `json:"session_id"`
 	BaseClaims
 }

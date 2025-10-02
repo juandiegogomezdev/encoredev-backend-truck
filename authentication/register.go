@@ -1,10 +1,10 @@
-package auth
+package authentication
 
 import (
 	"context"
-	"fmt"
 
 	"encore.app/pkg/utils"
+	"encore.app/sessions"
 )
 
 //encore:api public method=POST path=/auth/register
@@ -60,11 +60,12 @@ func (s *ServiceAuth) ConfirmUserRegister(ctx context.Context, req *RequestConfi
 	}
 
 	// Generate login token
-	token, err := s.b.GenerateOrgAccessToken(userID)
+	token, err := sessions.GenerateOrgAccessToken(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Content type is:", req.ClientType)
+
+	// Save session in the database
 
 	// If is mobile, return token in response body
 	if req.ClientType == "mobile" {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"encore.app/auth/store"
+	"encore.app/authentication/store"
 	"encore.dev/beta/errs"
 	"encore.dev/types/uuid"
 )

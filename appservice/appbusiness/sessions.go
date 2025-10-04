@@ -1,28 +1,30 @@
-package business
+package appbusiness
 
 import (
 	"context"
 	"fmt"
 	"time"
 
+	"encore.app/appservice/appstore"
 	"encore.app/pkg/myjwt"
-	"encore.app/sessions/store"
 	"encore.dev/beta/errs"
 	"encore.dev/types/uuid"
 )
 
-type BusinessSession struct {
-	store *store.SessionStore
-
-	tokenizer myjwt.JWTTokenizer
-}
-
-func NewBusinessSession(store *store.SessionStore, tokenizer myjwt.JWTTokenizer) *BusinessSession {
-	return &BusinessSession{store: store, tokenizer: tokenizer}
+func (b *BusinessApp) GenerateConfirmRegisterToken(newEmail string) (string, error) {
+	claims, err := b.tokenizer.GenerateConfirmRegisterToken(newEmail)
+	if err != nil {
+		fmt.Println("Error generating confirm register token:", err)
+		return "", &errs.Error{
+			Code:    errs.Internal,
+			Message: "Error al generar el token de confirmación",
+		}
+	}
+	return claims, nil
 }
 
 // Check if is posible create a new session and return the new session ID
-func (b *BusinessSession) isPosibleCreateNewSession(ctx context.Context, userID uuid.UUID) (uuid.UUID, error) {
+func (b *BusinessApp) isPosibleCreateNewSession(ctx context.Context, userID uuid.UUID) (uuid.UUID, error) {
 	// Count active sessions for the user
 	count, err := b.store.CountSessionsByUserID(ctx, userID)
 	if err != nil {
@@ -55,7 +57,7 @@ func (b *BusinessSession) isPosibleCreateNewSession(ctx context.Context, userID 
 }
 
 // Create a session for enter to org-select page
-func (b *BusinessSession) CreateOrgSelectSession(ctx context.Context, userID uuid.UUID, deviceInfo string) (string, error) {
+func (b *BusinessApp) CreateOrgSelectSession(ctx context.Context, userID uuid.UUID, deviceInfo string) (string, error) {
 	// Check if is posible create a new session and create the sessionID
 	sessionID, err := b.isPosibleCreateNewSession(ctx, userID)
 
@@ -63,7 +65,7 @@ func (b *BusinessSession) CreateOrgSelectSession(ctx context.Context, userID uui
 	tokenOrgSelect, err := b.tokenizer.GenerateOrgSelectToken(userID, sessionID)
 
 	// New session parameters
-	newSession := store.CreateUserSessionStruct{
+	newSession := appstore.CreateUserSessionStruct{
 		UserID:     userID,
 		SessionID:  sessionID,
 		DeviceInfo: deviceInfo,
@@ -81,7 +83,7 @@ func (b *BusinessSession) CreateOrgSelectSession(ctx context.Context, userID uui
 }
 
 // Create a session for enter to the app and use the apis
-func (b *BusinessSession) CreateMembershipSession(ctx context.Context, membershipID uuid.UUID, sessionID uuid.UUID) (string, error) {
+func (b *BusinessApp) CreateMembershipSession(ctx context.Context, membershipID uuid.UUID, sessionID uuid.UUID) (string, error) {
 
 	// Create the org select token
 	tokenMembership, err := b.tokenizer.GenerateMembershipToken(membershipID, sessionID)
@@ -97,7 +99,7 @@ func (b *BusinessSession) CreateMembershipSession(ctx context.Context, membershi
 }
 
 // Delete the user session of the database.
-func (b *BusinessSession) DeleteUserSession(ctx context.Context, tokenSession string) {
+func (b *BusinessApp) DeleteUserSession(ctx context.Context, tokenSession string) {
 	// Parse the token to get the session ID
 	claims, tokenStatus := b.tokenizer.ParseFullClaims(tokenSession)
 
@@ -116,7 +118,7 @@ func (b *BusinessSession) DeleteUserSession(ctx context.Context, tokenSession st
 }
 
 // Check if a session is expired (Refresh token)
-func (b *BusinessSession) CheckSessionIsActive(ctx context.Context, sessionID uuid.UUID) (bool, error) {
+func (b *BusinessApp) CheckSessionIsActive(ctx context.Context, sessionID uuid.UUID) (bool, error) {
 	isActive, err := b.store.IsActiveSession(ctx, sessionID)
 
 	if err != nil {

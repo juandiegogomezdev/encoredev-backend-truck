@@ -1,4 +1,4 @@
-package store
+package appstore
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 // Search if user exists by email
-func (s *AuthStore) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
+func (s *AppStore) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
 	var exists bool
 	q := "SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)"
 	err := s.db.QueryRow(ctx, q, email).Scan(&exists)
@@ -19,7 +19,7 @@ func (s *AuthStore) UserExistsByEmail(ctx context.Context, email string) (bool, 
 }
 
 // Create a new user in the database
-func (s *AuthStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct, verification *CreateUserVerificationStruct) error {
+func (s *AppStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct, verification *CreateUserVerificationStruct) error {
 	tx, err := s.db.Begin(ctx)
 	if err != nil {
 		return err

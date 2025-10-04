@@ -1,9 +1,9 @@
-package authentication
+package appService
 
 import "context"
 
-//encore:api public method=POST path=/auth/login
-func (s *ServiceAuth) Login(ctx context.Context, req *RequestLogin) (*ResponseLogin, error) {
+//encore:api public method=POST path=/login
+func (s *ServiceApp) Login(ctx context.Context, req *RequestLogin) (*ResponseLogin, error) {
 	token, err := s.b.Login(ctx, req.Email, req.Password)
 	if err != nil {
 		return nil, err

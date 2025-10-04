@@ -1,14 +1,13 @@
-package authentication
+package appService
 
 import (
 	"context"
 
 	"encore.app/pkg/utils"
-	"encore.app/sessions"
 )
 
 //encore:api public method=POST path=/auth/register
-func (s *ServiceAuth) Register(ctx context.Context, req *RequestRegisterUser) (*ResponseRegister, error) {
+func (s *ServiceApp) Register(ctx context.Context, req *RequestRegisterUser) (*ResponseRegister, error) {
 	err := s.b.CheckUserExists(ctx, req.Email)
 	if err != nil {
 		return nil, err
@@ -37,7 +36,7 @@ type RequestRegisterUser struct {
 }
 
 //encore:api public method=POST path=/auth/confirm-register
-func (s *ServiceAuth) ConfirmUserRegister(ctx context.Context, req *RequestConfirmRegisterUser) (*ResponseConfirmRegister, error) {
+func (s *ServiceApp) ConfirmUserRegister(ctx context.Context, req *RequestConfirmRegisterUser) (*ResponseConfirmRegister, error) {
 	// Get token with email
 	tokenConfirmEmail := req.Token
 
@@ -60,10 +59,8 @@ func (s *ServiceAuth) ConfirmUserRegister(ctx context.Context, req *RequestConfi
 	}
 
 	// Generate login token
-	resCreateOrgSelectSession, err := sessions.CreateOrgSelectSession(ctx, sessions.RequestCreateOrgSelectSession{
-		UserID:     userID,
-		DeviceInfo: "device info", // TODO: Get device info from request header
-	})
+
+	OrgSelectSessionToken, err := s.b.CreateOrgSelectSession(ctx, userID, "device info")
 	if err != nil {
 		return nil, err
 	}
@@ -75,13 +72,13 @@ func (s *ServiceAuth) ConfirmUserRegister(ctx context.Context, req *RequestConfi
 		// Return token in response body
 		return &ResponseConfirmRegister{
 			Message: "Usuario registrado correctamente",
-			Token:   resCreateOrgSelectSession.OrgSelectSessionToken,
+			Token:   OrgSelectSessionToken,
 		}, nil
 
 	}
 
 	// If is web, return token in HttpOnly cookie
-	cookieOptions := utils.DefaultCookieOptions("auth_token", resCreateOrgSelectSession.OrgSelectSessionToken)
+	cookieOptions := utils.DefaultCookieOptions("auth_token", OrgSelectSessionToken)
 	return &ResponseConfirmRegister{
 		Message:   "Usuario registrado correctamente",
 		Token:     "",

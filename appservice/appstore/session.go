@@ -1,26 +1,14 @@
-package store
+package appstore
 
 import (
 	"context"
 	"database/sql"
 	"time"
 
-	"encore.dev/storage/sqldb"
 	"encore.dev/types/uuid"
 )
 
-type SessionStore struct {
-	db *sqldb.Database
-}
-
-func NewSessionStore(db *sqldb.Database) *SessionStore {
-	if db == nil {
-		panic("database is nil")
-	}
-	return &SessionStore{db: db}
-}
-
-func (s *SessionStore) IsActiveSession(ctx context.Context, sessionID uuid.UUID) (bool, error) {
+func (s *AppStore) IsActiveSession(ctx context.Context, sessionID uuid.UUID) (bool, error) {
 	var isActive bool
 	q := `
 		SELECT is_active
@@ -40,7 +28,7 @@ func (s *SessionStore) IsActiveSession(ctx context.Context, sessionID uuid.UUID)
 }
 
 // Count sessions of a user
-func (s *SessionStore) CountSessionsByUserID(ctx context.Context, userID uuid.UUID) (int8, error) {
+func (s *AppStore) CountSessionsByUserID(ctx context.Context, userID uuid.UUID) (int8, error) {
 	var count int8
 	q := `SELECT COUNT(*) FROM user_sessions WHERE user_id = $1`
 	err := s.db.QueryRow(ctx, q, userID).Scan(&count)
@@ -51,7 +39,7 @@ func (s *SessionStore) CountSessionsByUserID(ctx context.Context, userID uuid.UU
 }
 
 // Create a sesssion for a user
-func (s *SessionStore) CreateUserSession(ctx context.Context, newSession CreateUserSessionStruct) error {
+func (s *AppStore) CreateUserSession(ctx context.Context, newSession CreateUserSessionStruct) error {
 
 	q := `
 		INSERT INTO user_sessions (user_id, session_id, device_info, expires_at)
@@ -62,7 +50,7 @@ func (s *SessionStore) CreateUserSession(ctx context.Context, newSession CreateU
 }
 
 // Delete a session of the user
-func (s *SessionStore) DeleteUserSession(ctx context.Context, sessionID uuid.UUID) error {
+func (s *AppStore) DeleteUserSession(ctx context.Context, sessionID uuid.UUID) error {
 	q := `DELETE FROM user_sessions WHERE session_id = $1		`
 
 	_, err := s.db.Exec(ctx, q, sessionID)

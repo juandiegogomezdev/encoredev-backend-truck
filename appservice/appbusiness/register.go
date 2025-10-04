@@ -1,18 +1,28 @@
-package business
+package appbusiness
 
 import (
 	"context"
 	"fmt"
 	"time"
 
-	"encore.app/authentication/store"
+	"encore.app/appservice/appstore"
 	"encore.app/pkg/myjwt"
 	"encore.dev/beta/errs"
 	"encore.dev/types/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
+// Hash the password using bcrypt.
+func GenerateHashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
 // This function extracts the new email from the provided token.
-func (b *BusinessAuth) ExtractNewEmailFromToken(ctx context.Context, token string) (string, error) {
+func (b *BusinessApp) ExtractNewEmailFromToken(ctx context.Context, token string) (string, error) {
 	fmt.Println("Extracting new email from token:", token)
 	claims, tokenStatus := b.tokenizer.ParseConfirmRegisterToken(token)
 	fmt.Println("token", claims)
@@ -39,7 +49,7 @@ func (b *BusinessAuth) ExtractNewEmailFromToken(ctx context.Context, token strin
 }
 
 // Check if the user exists
-func (b *BusinessAuth) CheckUserExists(ctx context.Context, email string) error {
+func (b *BusinessApp) CheckUserExists(ctx context.Context, email string) error {
 	exists, err := b.store.UserExistsByEmail(ctx, email)
 	if err != nil {
 		return &errs.Error{
@@ -57,7 +67,7 @@ func (b *BusinessAuth) CheckUserExists(ctx context.Context, email string) error 
 }
 
 // Send email with token to confirm registration
-func (b *BusinessAuth) SendConfirmRegisterEmail(ctx context.Context, email string, token string) {
+func (b *BusinessApp) SendConfirmRegisterEmail(ctx context.Context, email string, token string) {
 	// Send email with the token (using the mailer)
 
 	body := fmt.Sprint(`
@@ -75,7 +85,7 @@ func (b *BusinessAuth) SendConfirmRegisterEmail(ctx context.Context, email strin
 }
 
 // Create user in the database
-func (b *BusinessAuth) CreateUser(ctx context.Context, newEmail string, password string) (uuid.UUID, error) {
+func (b *BusinessApp) CreateUser(ctx context.Context, newEmail string, password string) (uuid.UUID, error) {
 	userID, err := uuid.NewV4()
 
 	if err != nil {
@@ -95,14 +105,14 @@ func (b *BusinessAuth) CreateUser(ctx context.Context, newEmail string, password
 		}
 	}
 
-	newUser := store.CreateUserStoreStruct{
+	newUser := appstore.CreateUserStoreStruct{
 		ID:             userID,
 		Email:          newEmail,
 		HashedPassword: hashedPassword,
 		CreatedAt:      time.Now(),
 	}
 
-	newUserVerification := store.CreateUserVerificationStruct{
+	newUserVerification := appstore.CreateUserVerificationStruct{
 		UserID:    userID,
 		Code:      b.generateCodeLogin(6),
 		CreatedAt: time.Now(),

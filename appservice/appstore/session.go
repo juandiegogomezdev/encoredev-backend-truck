@@ -8,7 +8,7 @@ import (
 	"encore.dev/types/uuid"
 )
 
-func (s *AppStore) IsActiveSession(ctx context.Context, sessionID uuid.UUID) (bool, error) {
+func (s *StoreApp) IsActiveSession(ctx context.Context, sessionID uuid.UUID) (bool, error) {
 	var isActive bool
 	q := `
 		SELECT is_active
@@ -28,7 +28,7 @@ func (s *AppStore) IsActiveSession(ctx context.Context, sessionID uuid.UUID) (bo
 }
 
 // Count sessions of a user
-func (s *AppStore) CountSessionsByUserID(ctx context.Context, userID uuid.UUID) (int8, error) {
+func (s *StoreApp) CountSessionsByUserID(ctx context.Context, userID uuid.UUID) (int8, error) {
 	var count int8
 	q := `SELECT COUNT(*) FROM user_sessions WHERE user_id = $1`
 	err := s.db.QueryRow(ctx, q, userID).Scan(&count)
@@ -39,7 +39,7 @@ func (s *AppStore) CountSessionsByUserID(ctx context.Context, userID uuid.UUID) 
 }
 
 // Create a sesssion for a user
-func (s *AppStore) CreateUserSession(ctx context.Context, newSession CreateUserSessionStruct) error {
+func (s *StoreApp) CreateUserSession(ctx context.Context, newSession CreateUserSessionStruct) error {
 
 	q := `
 		INSERT INTO user_sessions (user_id, session_id, device_info, expires_at)
@@ -50,7 +50,7 @@ func (s *AppStore) CreateUserSession(ctx context.Context, newSession CreateUserS
 }
 
 // Delete a session of the user
-func (s *AppStore) DeleteUserSession(ctx context.Context, sessionID uuid.UUID) error {
+func (s *StoreApp) DeleteUserSession(ctx context.Context, sessionID uuid.UUID) error {
 	q := `DELETE FROM user_sessions WHERE session_id = $1		`
 
 	_, err := s.db.Exec(ctx, q, sessionID)

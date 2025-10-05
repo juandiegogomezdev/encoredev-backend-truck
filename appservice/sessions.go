@@ -48,6 +48,14 @@ import (
 // 	MembershipSessionToken string `json:"membership_session_token"`
 // }
 
+//encore:api public method=POST path=/session/refresh
+func (s *ServiceApp) RefreshToken(ctx context.Context) error {
+	return &errs.Error{
+		Code:    errs.Unimplemented,
+		Message: "Not implemented",
+	}
+}
+
 //encore:api public method=POST path=/session/delete/web
 func (s *ServiceApp) DeleteWebUserSession(ctx context.Context, req requestDeleteSessionWeb) (responseDeleteSessionWeb, error) {
 	// Generate the expired cookie to delete the cookie in the browser

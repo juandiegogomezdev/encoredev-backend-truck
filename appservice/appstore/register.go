@@ -8,7 +8,7 @@ import (
 )
 
 // Search if user exists by email
-func (s *AppStore) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
+func (s *StoreApp) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
 	var exists bool
 	q := "SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)"
 	err := s.db.QueryRow(ctx, q, email).Scan(&exists)
@@ -19,16 +19,16 @@ func (s *AppStore) UserExistsByEmail(ctx context.Context, email string) (bool, e
 }
 
 // Create a new user in the database
-func (s *AppStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct, verification *CreateUserVerificationStruct) error {
+func (s *StoreApp) CreateUser(ctx context.Context, user *CreateUserStoreStruct, verification *CreateUserVerificationStruct) error {
 	tx, err := s.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
 
 	qUser := `
-		INSERT INTO users (id, email, hashed_password, created_at)
-		VALUES ($1, $2, $3, $4)`
-	_, err = tx.Exec(ctx, qUser, user.ID, user.Email, user.HashedPassword, user.CreatedAt)
+		INSERT INTO users (id, email, hashed_password)
+		VALUES ($1, $2, $3)`
+	_, err = tx.Exec(ctx, qUser, user.ID, user.Email, user.HashedPassword)
 
 	if err != nil {
 		tx.Rollback()
@@ -36,10 +36,10 @@ func (s *AppStore) CreateUser(ctx context.Context, user *CreateUserStoreStruct, 
 	}
 
 	qVerification := `
-		INSERT INTO user_login_codes (user_id, code, created_at, expires_at)
-		VALUES ($1, $2, $3, $4)`
+		INSERT INTO user_login_codes (user_id, code, expires_at)
+		VALUES ($1, $2, $3)`
 
-	_, err = tx.Exec(ctx, qVerification, verification.UserID, verification.Code, verification.CreatedAt, verification.ExpiresAt)
+	_, err = tx.Exec(ctx, qVerification, verification.UserID, verification.Code, verification.ExpiresAt)
 
 	if err != nil {
 		tx.Rollback()
@@ -56,12 +56,10 @@ type CreateUserStoreStruct struct {
 	ID             uuid.UUID
 	Email          string
 	HashedPassword string
-	CreatedAt      time.Time
 }
 
 type CreateUserVerificationStruct struct {
 	UserID    uuid.UUID
 	Code      string
-	CreatedAt time.Time
 	ExpiresAt time.Time
 }

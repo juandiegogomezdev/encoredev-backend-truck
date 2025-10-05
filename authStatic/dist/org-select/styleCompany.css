@@ -4,8 +4,8 @@
 
 .companiesContainer {
     display: grid;
-    gap: 12px;
-    row-gap: 10px;
+    gap: 16px;
+    row-gap: 16px;
     grid-template-columns: 1fr 1fr 1fr;
 }
 
@@ -23,7 +23,7 @@
 
 .cardCompany {
     border: 1px solid #eee;
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     padding: 16px 16px;
     width: 100%;
     box-shadow: var(--shadow);
@@ -32,12 +32,12 @@
 }
 
 .cardCompanyHeader {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .headerTopCompany {
     display: flex;
-    gap: 4px;
+    gap: 8px;
 }
 
 .nameOrg {

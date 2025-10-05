@@ -1,7 +1,6 @@
 package appService
 
 import (
-	"fmt"
 	"net/http"
 
 	"encore.app/appservice/appbusiness"
@@ -10,6 +9,7 @@ import (
 	"encore.app/pkg/resendmailer"
 	"encore.dev/config"
 	"encore.dev/storage/sqldb"
+	"github.com/jmoiron/sqlx"
 )
 
 var secrets struct {
@@ -33,15 +33,12 @@ type ServiceApp struct {
 }
 
 func initServiceApp() (*ServiceApp, error) {
-
-	fmt.Println("secrets.JWT_SECRET_KEY:", secrets.JWT_SECRET_KEY)
-	fmt.Println("cfg", cfg.BaseUrl)
+	appDBX := sqlx.NewDb(appDB.Stdlib(), "postgres")
+	tokenizer := myjwt.NewJWTTokenizer(secrets.JWT_SECRET_KEY)
 
 	// Initialize the resend mailer
 	m := resendmailer.NewResendMailer(secrets.RESEND_API_KEY, "Acme <onboarding@resend.dev>")
-
-	s := appstore.NewAppStore(appDB)
-	tokenizer := myjwt.NewJWTTokenizer(secrets.JWT_SECRET_KEY)
+	s := appstore.NewStoreApp(appDB, appDBX)
 	b := appbusiness.NewAppBusiness(s, tokenizer, m)
 	return &ServiceApp{b: b}, nil
 }

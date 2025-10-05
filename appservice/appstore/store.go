@@ -2,15 +2,17 @@ package appstore
 
 import (
 	"encore.dev/storage/sqldb"
+	"github.com/jmoiron/sqlx"
 )
 
-type AppStore struct {
-	db *sqldb.Database
+type StoreApp struct {
+	db  *sqldb.Database
+	dbx *sqlx.DB
 }
 
-func NewAppStore(db *sqldb.Database) *AppStore {
+func NewStoreApp(db *sqldb.Database, dbx *sqlx.DB) *StoreApp {
 	if db == nil {
 		panic("database is nil")
 	}
-	return &AppStore{db: db}
+	return &StoreApp{db: db, dbx: dbx}
 }

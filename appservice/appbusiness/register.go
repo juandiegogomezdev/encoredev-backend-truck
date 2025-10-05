@@ -109,13 +109,11 @@ func (b *BusinessApp) CreateUser(ctx context.Context, newEmail string, password 
 		ID:             userID,
 		Email:          newEmail,
 		HashedPassword: hashedPassword,
-		CreatedAt:      time.Now(),
 	}
 
 	newUserVerification := appstore.CreateUserVerificationStruct{
 		UserID:    userID,
 		Code:      b.generateCodeLogin(6),
-		CreatedAt: time.Now(),
 		ExpiresAt: time.Now().Add(15 * time.Minute),
 	}
 

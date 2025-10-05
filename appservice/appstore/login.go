@@ -14,7 +14,7 @@ type GetUserByEmailResult struct {
 }
 
 // GetUserByEmail retrieves a user's ID by their email.
-func (s *AppStore) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailResult, error) {
+func (s *StoreApp) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailResult, error) {
 	var result GetUserByEmailResult
 	q := "SELECT id, hashed_password FROM users WHERE email = $1"
 	err := s.db.QueryRow(ctx, q, email).Scan(&result.ID, &result.PasswordHash)
@@ -31,7 +31,7 @@ type GetUserLoginCodeResult struct {
 }
 
 // GetUserLoginCodeByUserID retrieves a user's login code by their user ID.
-func (s *AppStore) GetUserLoginCodeByUserID(ctx context.Context, userID uuid.UUID) (GetUserLoginCodeResult, error) {
+func (s *StoreApp) GetUserLoginCodeByUserID(ctx context.Context, userID uuid.UUID) (GetUserLoginCodeResult, error) {
 	var result GetUserLoginCodeResult
 	q := "SELECT code, expires_at FROM user_login_codes WHERE user_id = $1"
 	err := s.db.QueryRow(ctx, q, userID).Scan(&result.Code, &result.ExpiresAt)
@@ -42,7 +42,7 @@ func (s *AppStore) GetUserLoginCodeByUserID(ctx context.Context, userID uuid.UUI
 }
 
 // CreateUserLoginCode creates a new login code for a user.
-func (s *AppStore) CreateUserLoginCode(ctx context.Context, userID uuid.UUID, code string, created_at time.Time, expiresAt time.Time) error {
+func (s *StoreApp) CreateUserLoginCode(ctx context.Context, userID uuid.UUID, code string, created_at time.Time, expiresAt time.Time) error {
 	q := "INSERT INTO user_login_codes (user_id, code, expires_at) VALUES ($1, $2, $3)"
 	_, err := s.db.Exec(ctx, q, userID, code, expiresAt)
 	return err

@@ -20,7 +20,7 @@ header p {
 
 .card {
     width: 100%;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     padding: 12px ;
 }
 

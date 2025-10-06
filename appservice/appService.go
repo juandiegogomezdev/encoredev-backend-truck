@@ -2,8 +2,8 @@ package appService
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"strings"
 
 	"encore.app/appservice/appbusiness"
 	"encore.app/appservice/appstore"
@@ -13,6 +13,7 @@ import (
 	"encore.dev/beta/errs"
 	"encore.dev/config"
 	"encore.dev/storage/sqldb"
+	"encore.dev/types/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -55,15 +56,56 @@ type MyAuthParams struct {
 }
 
 //encore:authhandler
-func (s *ServiceApp) AuthHandler(ctx context.Context, p *MyAuthParams) (auth.UID, error) {
-	if p.SessionCookie.Value == "" || p.AuthorizationHeader == "" {
+func (s *ServiceApp) AuthHandler(ctx context.Context, p *MyAuthParams) (auth.UID, *AuthData, error) {
+	// Extract the token from the request
+	token, err := extractToken(p)
+	if err != nil {
+		return "", nil, err
+	}
+
+	// Parse the token and get the claims
+	claims, err := s.b.ParseMembershipToken(token)
+	if err != nil {
+		return "", nil, err
+	}
+
+	authData := &AuthData{
+		UserID:       claims.UserID,
+		SessionID:    claims.SessionID,
+		MembershipID: claims.MembershipID,
+	}
+	return auth.UID(claims.UserID.String()), authData, nil
+}
+
+type AuthData struct {
+	UserID       uuid.UUID
+	SessionID    uuid.UUID
+	MembershipID uuid.UUID
+}
+
+// Extract token from AuthParams
+func extractToken(p *MyAuthParams) (token string, err error) {
+	// Verify if the token is in the cookie
+	if p.SessionCookie != nil {
+		return p.SessionCookie.Value, nil
+	}
+
+	// Verify if the token is in the Authorization header
+	if p.AuthorizationHeader != "" {
+		if after, found := strings.CutPrefix(p.AuthorizationHeader, "Bearer "); found {
+			token = strings.TrimSpace(after)
+			if token != "" {
+				return token, nil
+			}
+		}
 		return "", &errs.Error{
 			Code:    errs.Unauthenticated,
-			Message: "no authentication provided",
-		} // No auth provided
+			Message: "Formato de header de autorizacion invalido",
+		}
 	}
-	fmt.Println("AuthHandler called")
-	fmt.Println("Cookie:", p.SessionCookie.Value)
-	fmt.Println("Authorization:", p.AuthorizationHeader)
-	return auth.UID("user-id:1234"), nil
+
+	return "", &errs.Error{
+		Code:    errs.Unauthenticated,
+		Message: "se requiere autenticacion: proporciona una cookie o un header de autorizacion",
+	}
 }

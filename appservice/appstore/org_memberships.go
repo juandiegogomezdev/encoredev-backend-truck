@@ -39,7 +39,7 @@ func (s *StoreApp) GetUserMemberships(ctx context.Context, userID uuid.UUID) ([]
 		JOIN roles r ON om.role_id = r.id
 		WHERE om.user_id = $1
 	`
-	var memberships []shared.Membership
+	memberships := []shared.Membership{}
 	if err := s.dbx.SelectContext(ctx, &memberships, q, userID); err != nil {
 		return nil, err
 	}

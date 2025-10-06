@@ -1,33 +1,12 @@
 
 
 addEventListener("DOMContentLoaded", async (event) => {
+    // List of memberships
+    var membershipsList = [];
+
     const cardsSpace = document.querySelectorAll(".cardSpace");
 
-    // try {
-    //     const response = await fetch(`${window.APP_CONFIG.api_url}/org/session`)
-    //     if (response.ok) {
-    //         const sessionData = await response.json();
-    //         console.log("session data: ", sessionData);
-    //     }
-    //     else {
-    //         console.error("Failed to fetch session data: ", response.status);
-    //     }
-    // }
-    // catch(err) {
-    //     console.error("Error fetching session data: ", err);
-    // }
-
-    try {
-        const response = await fetch(`${window.APP_CONFIG.api.url}/memberships`)
-        if (response.ok) {
-            const memberships = await response.json();
-            console.log("memberships: ", memberships);
-        }
-    }
-    catch {
-        console.error("Error fetching memberships");
-    }
-
+    membershipsList = await loadMembershipCards()
 
     // cardsSpace.forEach(card => {
     //     card.addEventListener("click", ()=> {
@@ -38,3 +17,59 @@ addEventListener("DOMContentLoaded", async (event) => {
     // })
 
 })
+
+
+
+async function loadMembershipCards() {
+    
+    // Memberships list
+    var membershipsList = [];
+
+
+    try {
+        // Fetch memberships
+        const response = await fetch(`${window.APP_CONFIG.api_url}/memberships`)
+        if (response.ok) {
+            const res = await response.json();
+            membershipsList = res.memberships;
+
+            console.log("Memberships fetched: ", membershipsList);
+
+            // If no memberships, create personal membership
+            if (membershipsList.length == 0) {
+                membershipsList = await CreatePersonalMembership();
+            }
+        }
+        else {
+            console.error("Error fetching memberships: ", response.status);
+        }  
+    }
+    catch (err) {
+        console.error("Error fetching memberships: ", err);
+    }
+
+    return membershipsList;
+}
+
+async function CreatePersonalMembership() {
+    console.log("Creating personal membership")
+    var membershipsList = [];
+    try {
+        const response = await fetch(`${window.APP_CONFIG.api_url}/org/personal`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        if (response.ok) {
+            const res = await response.json();
+            membershipsList = [res.membership];
+        }
+
+    }
+    catch (err) {
+        console.error("Error creating personal membership card:", err)
+    }
+
+    return membershipsList;
+}

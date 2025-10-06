@@ -2,8 +2,10 @@ package appstore
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"encore.app/appservice/shared"
 	"encore.dev/types/uuid"
 )
 
@@ -13,7 +15,7 @@ func (s *StoreApp) GetAllUserOrganizations(ctx context.Context, userID uuid.UUID
 	query := `
 		SELECT id, name, type, created_at
 		FROM organizations
-		WHERE user_id = $1
+		WHERE owner_user_id = $1
 	`
 	var organizations []ResUserOrganizationStore
 	if err := s.dbx.SelectContext(ctx, &organizations, query, userID); err != nil {
@@ -23,43 +25,27 @@ func (s *StoreApp) GetAllUserOrganizations(ctx context.Context, userID uuid.UUID
 }
 
 type ResUserOrganizationStore struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Type      string    `json:"type"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-// Create a new organization for a user
-func (s *StoreApp) CreateUserOrganization(ctx context.Context, ownerId uuid.UUID, name string, orgType string) error {
-	var createdAt time.Time
-	var orgId uuid.UUID
-	query := `
-		INSERT INTO organizations (owner_id, name, type)
-		VALUES ($1, $2, $3)
-		RETURNING id, created_at
-	`
-	err := s.db.QueryRow(ctx, query, ownerId, name, orgType).Scan(&orgId, &createdAt)
-	if err != nil {
-		return err
-	}
-	return nil
+	ID        uuid.UUID `json:"id" db:"id"`
+	Name      string    `json:"name" db:"name"`
+	Type      string    `json:"type" db:"type"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 // Create and organization and assign the owner as admin
-func (s *StoreApp) CreateOrgAndMembership(ctx context.Context, org CreateOrganizationStruct, membership CreateOrgMembershipStruct) error {
+func (s *StoreApp) CreateOrgAndMembership(ctx context.Context, newOrg shared.CreateOrganizationStruct, newMembership shared.CreateOwnerMembershipStruct) error {
 	tx, err := s.dbx.BeginTxx(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	orgQuery := `
-		INSERT INTO organizations (id, owner_id, name, type)
-		VALUES (:id, :owner_id, :name, :type)
+		INSERT INTO organizations (id, owner_user_id, name, type)
+		VALUES (:id, :owner_user_id, :name, :type)
 		`
 
-	if _, err := tx.NamedExecContext(ctx, orgQuery, org); err != nil {
+	if _, err := tx.NamedExecContext(ctx, orgQuery, newOrg); err != nil {
 		tx.Rollback()
-		return err
+		return fmt.Errorf("error creating organization: %w", err)
 	}
 
 	// Find the role ID for "owner"
@@ -67,36 +53,23 @@ func (s *StoreApp) CreateOrgAndMembership(ctx context.Context, org CreateOrganiz
 	roleQuery := `SELECT id FROM roles WHERE name = 'owner'`
 	if err := tx.GetContext(ctx, &roleID, roleQuery); err != nil {
 		tx.Rollback()
-		return err
+		return fmt.Errorf("error getting role ID: %w", err)
 	}
 
-	membership.RoleID = roleID
+	newMembership.RoleID = roleID
 
 	membershipQuery := `
 		INSERT INTO org_memberships (id, org_id, user_id, role_id, status, created_by)
 		VALUES (:id, :org_id, :user_id, :role_id, :status, :created_by)
 	`
 
-	if _, err := tx.NamedExecContext(ctx, membershipQuery, membership); err != nil {
+	if _, err := tx.NamedExecContext(ctx, membershipQuery, newMembership); err != nil {
 		tx.Rollback()
-		return err
+		return fmt.Errorf("error creating membership: %w", err)
 	}
+
+	tx.Commit()
 
 	return nil
 
-}
-
-type CreateOrganizationStruct struct {
-	OrgID   uuid.UUID `db:"id"`
-	OwnerID uuid.UUID `db:"owner_id"`
-	Name    string    `db:"name"`
-	Type    string    `db:"type"`
-}
-type CreateOwnerMembershipStruct struct {
-	ID        uuid.UUID `db:"id"`
-	OrgID     uuid.UUID `db:"org_id"`
-	UserID    uuid.UUID `db:"user_id"`
-	RoleID    uuid.UUID `db:"role_id"`
-	Status    string    `db:"status"`
-	CreatedBy uuid.UUID `db:"created_by"`
 }

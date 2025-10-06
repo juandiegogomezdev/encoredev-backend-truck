@@ -42,7 +42,7 @@ func (t *jwtTokenizer) GenerateConfirmLoginToken(userID uuid.UUID) (string, erro
 		BaseClaims: BaseClaims{
 			TokenType: TokenTypeConfirmLogin,
 			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 30)),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 300)),
 			},
 		},
 	}
@@ -58,7 +58,7 @@ func (t *jwtTokenizer) GenerateOrgSelectToken(userID uuid.UUID, sessionID uuid.U
 		BaseClaims: BaseClaims{
 			TokenType: TokenTypeOrgSelect,
 			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 10)),
 			},
 		},
 	}
@@ -67,8 +67,9 @@ func (t *jwtTokenizer) GenerateOrgSelectToken(userID uuid.UUID, sessionID uuid.U
 }
 
 // This token is used to access the api as a member of an organization.
-func (t *jwtTokenizer) GenerateMembershipToken(membershipID uuid.UUID, sessionID uuid.UUID) (string, error) {
+func (t *jwtTokenizer) GenerateMembershipToken(userID, membershipID, sessionID uuid.UUID) (string, error) {
 	claims := MembershipClaims{
+		UserID:       userID,
 		MembershipID: membershipID,
 		SessionID:    sessionID,
 		BaseClaims: BaseClaims{

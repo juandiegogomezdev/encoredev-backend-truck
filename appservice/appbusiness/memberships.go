@@ -2,6 +2,7 @@ package appbusiness
 
 import (
 	"context"
+	"fmt"
 
 	"encore.app/appservice/shared"
 	"encore.dev/beta/errs"
@@ -11,6 +12,7 @@ import (
 func (b *BusinessApp) GetAllUserMemberships(ctx context.Context, userID uuid.UUID) ([]shared.Membership, error) {
 	memberships, err := b.store.GetUserMemberships(ctx, userID)
 	if err != nil {
+		fmt.Println("Error getting user memberships:", err)
 		return nil, &errs.Error{
 			Code:    errs.Internal,
 			Message: "failed to get user memberships",

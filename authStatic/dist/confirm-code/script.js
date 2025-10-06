@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmForm = document.getElementById('confirmForm')
   const inputCode = document.getElementById('inputCode')
   const errorMessage = document.getElementById('errorMessage')
-
+  console.log("Token recibido: ", token)
   confirmForm.addEventListener('submit', async function (e) {
     e.preventDefault()
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ code, token })
       })
 
       if (!response.ok) {
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return
       } else {
         window.location.href = window.APP_CONFIG.page_org_select
+        return
       }
     } catch (error) {
       errorMessage.textContent = 'Error en el servidor!'

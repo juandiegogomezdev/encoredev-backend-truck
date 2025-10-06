@@ -16,12 +16,17 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     })
 
 
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json()
+      console.log(data)
+      window.location.href = window.APP_CONFIG.page_url_login_confirm+'?token=' + data.token
+
+    }
+    else {
       errorMessage.textContent = await response.text()
       errorMessage.style.display = 'block'
-    } else {
-      window.location.href = window.APP_CONFIG.page_url_login_confirm
     }
+    
   } catch (error) {
     console.log(error)
     errorMessage.style.display = 'block'

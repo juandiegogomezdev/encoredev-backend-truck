@@ -87,10 +87,10 @@ func (b *BusinessApp) CreateOrgSelectSession(ctx context.Context, userID uuid.UU
 }
 
 // Create a session for enter to the app and use the apis
-func (b *BusinessApp) CreateMembershipSession(ctx context.Context, membershipID uuid.UUID, sessionID uuid.UUID) (string, error) {
+func (b *BusinessApp) CreateMembershipSession(ctx context.Context, userID, membershipID, sessionID uuid.UUID) (string, error) {
 
 	// Create the org select token
-	tokenMembership, err := b.tokenizer.GenerateMembershipToken(membershipID, sessionID)
+	tokenMembership, err := b.tokenizer.GenerateMembershipToken(userID, membershipID, sessionID)
 	if err != nil {
 		fmt.Println("Error generating membership token:", err)
 		return "", &errs.Error{

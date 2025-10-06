@@ -27,7 +27,7 @@ func (s *StoreApp) GetUserByEmail(ctx context.Context, email string) (GetUserByE
 // GetUserLoginCodeResult holds the result of GetUserLoginCodeByUserID.
 type GetUserLoginCodeResult struct {
 	Code      string
-	ExpiresAt string
+	ExpiresAt time.Time
 }
 
 // GetUserLoginCodeByUserID retrieves a user's login code by their user ID.

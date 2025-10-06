@@ -1,0 +1,70 @@
+
+
+.loadingCard {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.9;
+  background-color: white;
+}
+
+/* Efecto de brillo en movimiento */
+.loadingCard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(180, 180, 180, 0.2) 50%,
+    transparent 100%
+  );
+  animation: loadingShimmer 1.5s infinite;
+}
+
+@keyframes loadingShimmer {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+
+.loadingRole {
+    display: inline-block;
+    width: 70px;
+    height: 1rem;
+    background-color: var(--color-grey-lighter);
+    border: 1px solid var(--color-grey-light);
+    border-radius: var(--border-radius-sm);
+}
+.loadingStatus {
+    display: inline-block;
+    width: 60px;
+    height: 1rem;
+    background-color: var(--color-grey-lighter);
+    border: 1px solid var(--color-grey-light);
+    border-radius: var(--border-radius-sm);
+}
+
+.loadingNameOrg {
+    width: 90%;
+    height: 2.4em;
+    background-color: var(--color-grey-lighter);
+    border: 1px solid var(--color-grey-light);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 12px;
+}
+
+.loadingDate {
+    width: 110px;
+    height: 1.1rem;
+    background-color: var(--color-grey-lighter);
+    border: 1px solid var(--color-grey-light);
+    border-radius: var(--border-radius-sm);
+}

@@ -16,14 +16,25 @@ addEventListener("DOMContentLoaded", async (event) => {
     // catch(err) {
     //     console.error("Error fetching session data: ", err);
     // }
-    
 
-    cardsSpace.forEach(card => {
-        card.addEventListener("click", ()=> {
-            const spaceID = card.getAttribute("data-space-id");
-            console.log("selected space id: ", spaceID);
+    try {
+        const response = await fetch(`${window.APP_CONFIG.api.url}/memberships`)
+        if (response.ok) {
+            const memberships = await response.json();
+            console.log("memberships: ", memberships);
+        }
+    }
+    catch {
+        console.error("Error fetching memberships");
+    }
+
+
+    // cardsSpace.forEach(card => {
+    //     card.addEventListener("click", ()=> {
+    //         const spaceID = card.getAttribute("data-space-id");
+    //         console.log("selected space id: ", spaceID);
                  
-        })
-    })
+    //     })
+    // })
 
 })

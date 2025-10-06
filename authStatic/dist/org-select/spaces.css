@@ -15,13 +15,13 @@ header p {
 .cardSection {
     display: flex;
     gap:20px;
-    margin: 20px 0 24px 0;
+    margin: 20px 0 40px 0;
 }
 
 .card {
     width: 100%;
     border-radius: var(--border-radius);
-    padding: 12px ;
+    padding: var(--padding-cards);
 }
 
 .cardSpace {
@@ -88,7 +88,7 @@ h4 {
 }
 
 .selected {
-    border: 2px solid oklch(.486 .218 264.052);
+    border: 3px solid oklch(.486 .218 264.052);
 }
 
 

@@ -36,9 +36,9 @@ func (t *jwtTokenizer) GenerateConfirmRegisterToken(newEmail string) (string, er
 }
 
 // This token is used to confirm a login via email code.
-func (t *jwtTokenizer) GenerateConfirmLoginToken(email string) (string, error) {
+func (t *jwtTokenizer) GenerateConfirmLoginToken(userID uuid.UUID) (string, error) {
 	claims := ConfirmLoginClaims{
-		Email: email,
+		UserID: userID,
 		BaseClaims: BaseClaims{
 			TokenType: TokenTypeConfirmLogin,
 			RegisteredClaims: jwt.RegisteredClaims{

@@ -9,8 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   confirmForm.addEventListener('submit', async function (e) {
     e.preventDefault()
 
-    console.log("Se envia el formulario")
-
     const errorMessage = document.getElementById('errorMessage')
     const code = inputCode.value.trim()
 

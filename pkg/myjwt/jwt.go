@@ -10,7 +10,7 @@ type JWTTokenizer interface {
 	signToken(claims jwt.Claims) (string, error)
 
 	GenerateConfirmRegisterToken(newEmail string) (string, error)
-	GenerateConfirmLoginToken(email string) (string, error)
+	GenerateConfirmLoginToken(userID uuid.UUID) (string, error)
 	GenerateOrgSelectToken(userID uuid.UUID, sessionID uuid.UUID) (string, error)
 	GenerateMembershipToken(membershipID uuid.UUID, sessionID uuid.UUID) (string, error)
 
@@ -58,7 +58,7 @@ type ConfirmRegisterClaims struct {
 
 // Used for confirm login
 type ConfirmLoginClaims struct {
-	Email string `json:"email"`
+	UserID uuid.UUID `json:"user_id"`
 	BaseClaims
 }
 

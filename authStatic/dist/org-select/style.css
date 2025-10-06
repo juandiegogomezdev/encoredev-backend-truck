@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 
 * {
     box-sizing: border-box;
@@ -5,7 +7,7 @@
 
 :root {
     --color-gray-light: oklch(.556 .012 106.423);
-    --color-red: crimson;
+    --color-red: oklch(80.8% 0.114 19.571);
     --color-red-light: oklch(93.6% 0.032 17.717);
     --color-red-lighter: oklch(97.1% 0.013 17.38);
 
@@ -36,7 +38,9 @@
     --shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
     --shadow-2: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-    --border-radius: 16px;
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --padding-cards: 28px 28px;
 }
 
 html {
@@ -50,11 +54,11 @@ html {
 }
 
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    max-width: 1400px;
+    font-family: 'inter', sans-serif;
+    max-width: 1350px;
     margin: 0 auto;
+    padding: 12px 16px;
+    height: 100%;
 }
 
 
@@ -70,7 +74,7 @@ body {
 }
 
 .spaceDescription {
-    margin: 0;
+    margin: 0 0 24px 0;
     color: var(--color-gray-light);
     font-size: 0.9rem;
 }
@@ -83,76 +87,65 @@ body {
 
 .nameOrg {
     font-size: 1.0rem;
-    font-weight: 500;
     margin: 0;
 }
 
 
-
-
-
-
 .statusOrg {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     padding: 4px 8px;
-    border-radius: 8px;
+    border-radius: var(--border-radius-sm);
     font-weight: 500;
 }
 
 .statusOrgActive {
     color: var(--color-green);
-    background-color: var(--color-green-lighter);
     border: 1px solid var(--color-green-light);
 }
 
 .statusOrgSuspended {
     color: var(--color-grey);
-    background-color: var(--color-grey-lighter);
     border: 1px solid var(--color-grey-light);
 }
 
 
+
+
 .rol {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     padding: 3px 6px;
-    border-radius: 8px;
-    font-weight: 800;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
     width: fit-content;
 }
 
 .rolOwner {
     color: crimson;
-    background-color: var(--color-red-lighter);
     border: 1px solid var(--color-red-light);
 }
 
 .rolPartner {
     color: var(--color-indigo);
-    background-color: var(--color-indigo-lighter);
     border: 1px solid var(--color-indigo-light);
 }
 
 .rolAdmin {
     color: var(--color-tail);
-    background-color: var(--color-tail-lighter);
     border: 1px solid var(--color-tail-light);
 }
 
 .rolDriver {
     color: var(--color-orange);
-    background-color: var(--color-orange-lighter);
     border: 1px solid var(--color-orange-light); 
 }
 
 .rolAccountant {
     color: var(--color-indigo);
-    background-color: var(--color-indigo-lighter);
     border: 1px solid var(--color-indigo-light);
 
 }
 
 .rolStatusSuspended {
     color: var(--color-yellow);
-    background-color: var(--color-yellow-lighter);
     border: 1px solid var(--color-yellow-light);
 }

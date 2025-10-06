@@ -1,12 +1,16 @@
 package appService
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 
 	"encore.app/appservice/appbusiness"
 	"encore.app/appservice/appstore"
 	"encore.app/pkg/myjwt"
 	"encore.app/pkg/resendmailer"
+	"encore.dev/beta/auth"
+	"encore.dev/beta/errs"
 	"encore.dev/config"
 	"encore.dev/storage/sqldb"
 	"github.com/jmoiron/sqlx"
@@ -44,6 +48,22 @@ func initServiceApp() (*ServiceApp, error) {
 }
 
 type MyAuthParams struct {
-	AuthToken     *http.Cookie `cookie:"auth_token"`
-	Authorization string       `header:"Authorization"`
+	// Extract the auth token from either the cookie or the Authorization header
+	SessionCookie *http.Cookie `cookie:"auth_token"`
+	// Extract the authorization header
+	AuthorizationHeader string `header:"Authorization"`
+}
+
+//encore:authhandler
+func (s *ServiceApp) AuthHandler(ctx context.Context, p *MyAuthParams) (auth.UID, error) {
+	if p.SessionCookie.Value == "" || p.AuthorizationHeader == "" {
+		return "", &errs.Error{
+			Code:    errs.Unauthenticated,
+			Message: "no authentication provided",
+		} // No auth provided
+	}
+	fmt.Println("AuthHandler called")
+	fmt.Println("Cookie:", p.SessionCookie.Value)
+	fmt.Println("Authorization:", p.AuthorizationHeader)
+	return auth.UID("user-id:1234"), nil
 }

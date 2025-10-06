@@ -75,7 +75,11 @@ func (b *BusinessApp) CreateOrgSelectSession(ctx context.Context, userID uuid.UU
 	// Save the new session in the database
 	err = b.store.CreateUserSession(ctx, newSession)
 	if err != nil {
-		return "", err
+		fmt.Println("Error creating user session:", err)
+		return "", &errs.Error{
+			Code:    errs.Internal,
+			Message: "Error al generar el acceso",
+		}
 	}
 
 	return tokenOrgSelect, nil

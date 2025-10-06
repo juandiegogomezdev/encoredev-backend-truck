@@ -1,17 +1,16 @@
 
 /* My companies styles*/
 
-
 .companiesContainer {
     display: grid;
-    gap: 16px;
-    row-gap: 16px;
+    gap: 20px;
+    row-gap: 20px;
     grid-template-columns: 1fr 1fr 1fr;
 }
 
 @media (max-width: 1150px) {
     .companiesContainer {
-        grid-template-columns: auto auto;
+        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -22,9 +21,10 @@
 }
 
 .cardCompany {
+    cursor: pointer;
     border: 1px solid #eee;
     border-radius: var(--border-radius);
-    padding: 16px 16px;
+    padding: var(--padding-cards);
     width: 100%;
     box-shadow: var(--shadow);
     transition: border-color 0.1s ease;
@@ -41,8 +41,18 @@
 }
 
 .nameOrg {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     font-size: 0.9rem;
     font-weight: 500;
+    margin-bottom: 12px;
+
+    line-height: 1.2em;
+    height: calc(1.2em * 2);
 }
 
 

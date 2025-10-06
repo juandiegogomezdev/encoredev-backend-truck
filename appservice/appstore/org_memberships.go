@@ -2,8 +2,8 @@ package appstore
 
 import (
 	"context"
-	"time"
 
+	"encore.app/appservice/shared"
 	"encore.dev/types/uuid"
 )
 
@@ -23,7 +23,7 @@ func (s *StoreApp) HasActiveMembership(ctx context.Context, userID uuid.UUID, or
 }
 
 // Get all memberships of a user
-func (s *StoreApp) GetUserMemberships(ctx context.Context, userID uuid.UUID) ([]ResGetUserMembership, error) {
+func (s *StoreApp) GetUserMemberships(ctx context.Context, userID uuid.UUID) ([]shared.Membership, error) {
 
 	q := `
 		SELECT
@@ -39,23 +39,12 @@ func (s *StoreApp) GetUserMemberships(ctx context.Context, userID uuid.UUID) ([]
 		JOIN roles r ON om.role_id = r.id
 		WHERE om.user_id = $1
 	`
-	var memberships []ResGetUserMembership
+	var memberships []shared.Membership
 	if err := s.dbx.SelectContext(ctx, &memberships, q, userID); err != nil {
 		return nil, err
 	}
 
 	return memberships, nil
-}
-
-type ResGetUserMembership struct {
-	ID          uuid.UUID `db:"id"`
-	Status      string    `db:"status"`
-	CreatedAt   time.Time `db:"created_at"`
-	FinalizedAt time.Time `db:"finalized_at"`
-	OrgName     string    `db:"org_name"`
-	OrgType     string    `db:"org_type"`
-	RoleName    string    `db:"role_name"`
-	Name        string    `db:"name"`
 }
 
 // Get the id of a user by membership

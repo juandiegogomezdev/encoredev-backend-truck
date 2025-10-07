@@ -16,6 +16,7 @@ header p {
     display: flex;
     gap:20px;
     margin: 20px 0 40px 0;
+    height: 100%;
 }
 
 .card {
@@ -26,7 +27,6 @@ header p {
 
 .cardSpace {
     
-    background-color: white;
     border: 1px solid #eee;
     box-shadow: var(--shadow);
     transition: box-shadow 0.2s ease;
@@ -36,7 +36,6 @@ header p {
 }
 
 .cardSpace:hover {
-    border-color: #ddd;
     box-shadow: var(--shadow-2);
 }
 

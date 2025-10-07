@@ -2,6 +2,7 @@ package appService
 
 import (
 	"context"
+	"time"
 
 	"encore.app/appservice/shared"
 	"encore.dev/beta/auth"
@@ -14,6 +15,7 @@ func (s *ServiceApp) GetUserMemberships(ctx context.Context) (GetUserMemberships
 	if err != nil {
 		return GetUserMembershipsResponse{}, err
 	}
+	time.Sleep(3 * time.Second)
 	return GetUserMembershipsResponse{Memberships: memberships}, nil
 }
 

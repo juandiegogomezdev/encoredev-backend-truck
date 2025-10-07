@@ -1,15 +1,16 @@
 
 
-.loadingCard {
+#loadingCard {
   position: relative;
   overflow: hidden;
   pointer-events: none;
   opacity: 0.9;
   background-color: white;
+  display: none;
 }
 
 /* Efecto de brillo en movimiento */
-.loadingCard::after {
+#loadingCard::after {
   content: "";
   position: absolute;
   top: 0;

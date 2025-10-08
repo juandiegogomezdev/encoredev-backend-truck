@@ -68,6 +68,21 @@ main {
 
 /*  */
 
+
+.card {
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: var(--border-radius);
+    padding: var(--padding-cards);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-2);
+
+}
+
 .spaceHeader {
     margin: 0px 0 12px 0;
 }

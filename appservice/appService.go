@@ -2,11 +2,13 @@ package appService
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"encore.app/appservice/appbusiness"
 	"encore.app/appservice/appstore"
+	"encore.app/appservice/shared"
 	"encore.app/pkg/myjwt"
 	"encore.app/pkg/resendmailer"
 	"encore.dev/beta/auth"
@@ -57,6 +59,9 @@ type MyAuthParams struct {
 
 //encore:authhandler
 func (s *ServiceApp) AuthHandler(ctx context.Context, p *MyAuthParams) (auth.UID, *AuthData, error) {
+	fmt.Println("AuthHandler called")
+	fmt.Println("AuthParams:", p)
+
 	// Extract the token from the request
 	token, err := extractToken(p)
 	if err != nil {
@@ -68,6 +73,7 @@ func (s *ServiceApp) AuthHandler(ctx context.Context, p *MyAuthParams) (auth.UID
 	if err != nil {
 		return "", nil, err
 	}
+	fmt.Println("Authenticated user:", claims.UserID)
 
 	authData := &AuthData{
 		UserID:       claims.UserID,
@@ -85,13 +91,16 @@ type AuthData struct {
 
 // Extract token from AuthParams
 func extractToken(p *MyAuthParams) (token string, err error) {
+	fmt.Print("Extracting token...\n")
 	// Verify if the token is in the cookie
 	if p.SessionCookie != nil {
+		fmt.Println("token found in cookie")
 		return p.SessionCookie.Value, nil
 	}
 
 	// Verify if the token is in the Authorization header
 	if p.AuthorizationHeader != "" {
+		fmt.Println("token found in header")
 		if after, found := strings.CutPrefix(p.AuthorizationHeader, "Bearer "); found {
 			token = strings.TrimSpace(after)
 			if token != "" {
@@ -101,11 +110,15 @@ func extractToken(p *MyAuthParams) (token string, err error) {
 		return "", &errs.Error{
 			Code:    errs.Unauthenticated,
 			Message: "Formato de header de autorizacion invalido",
+			Details: shared.ErrorDetailsToken{TokenStatus: "invalid_token"},
 		}
 	}
+
+	fmt.Println("no token found in cookie or header")
 
 	return "", &errs.Error{
 		Code:    errs.Unauthenticated,
 		Message: "se requiere autenticacion: proporciona una cookie o un header de autorizacion",
+		Details: shared.ErrorDetailsToken{TokenStatus: string(myjwt.TokenStatusInvalid)},
 	}
 }

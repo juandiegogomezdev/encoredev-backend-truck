@@ -37,7 +37,7 @@ func (s *AuthStaticService) ServeStaticFiles(w http.ResponseWriter, req *http.Re
 	//
 	// Verificacion diferentes al archivo endpoint de abajo
 	url := req.URL.Path
-	if strings.HasSuffix(url, ".js") || strings.HasSuffix(url, ".css") || strings.HasSuffix(url, ".ico") {
+	if !strings.HasSuffix(url, ".html") {
 		s.staticHandler.ServeHTTP(w, req)
 		return
 	}

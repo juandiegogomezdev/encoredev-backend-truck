@@ -2,6 +2,7 @@ package appbusiness
 
 import (
 	"encore.app/appservice/appstore"
+	"encore.app/appservice/shared"
 	"encore.app/pkg/myjwt"
 	"encore.app/pkg/resendmailer"
 	"encore.dev/beta/errs"
@@ -24,11 +25,13 @@ func (b *BusinessApp) ParseMembershipToken(token string) (*myjwt.MembershipClaim
 		return nil, &errs.Error{
 			Code:    errs.Unauthenticated,
 			Message: "El token ha expirado",
+			Details: shared.ErrorDetailsToken{TokenStatus: string(myjwt.TokenStatusExpired)},
 		}
 	case myjwt.TokenStatusInvalid:
 		return nil, &errs.Error{
 			Code:    errs.Unauthenticated,
 			Message: "El token no es válido",
+			Details: shared.ErrorDetailsToken{TokenStatus: string(myjwt.TokenStatusInvalid)},
 		}
 	case myjwt.TokenStatusValid:
 		return claims, nil
@@ -36,5 +39,6 @@ func (b *BusinessApp) ParseMembershipToken(token string) (*myjwt.MembershipClaim
 	return nil, &errs.Error{
 		Code:    errs.Unauthenticated,
 		Message: "Error al validar el token",
+		Details: shared.ErrorDetailsToken{TokenStatus: string(myjwt.TokenStatusInvalid)},
 	}
 }

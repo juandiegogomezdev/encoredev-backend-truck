@@ -2,7 +2,7 @@ let membershipsList = null;
 let filteredCompaniesList = null;
 let currentFilter = null;
 let loadingMemberships = true;
-
+let countRefresingToken = 0;
 
 addEventListener("DOMContentLoaded", async (event) => {
 
@@ -86,25 +86,6 @@ async function spaceEventListener(membershipsList) {
   });
 }
 
-
-// Toggle selected class on space cards
-function toggleSelectedCardSpace(card) {
-  const cardsSpace = document.querySelectorAll(".cardSpace");
-  cardsSpace.forEach((c) => {
-    c.classList.remove("selected");
-  });
-
-  // Check if card is already selected
-  if (card.classList.contains("selected")) {
-    card.classList.remove("selected");
-    return;
-  }
-
-
-  card.classList.add("selected");
-
-}
-
 // Show loading card
 function showLoadingCard(card) {
   const loadingCard = document.getElementById("loadingCard");
@@ -117,6 +98,28 @@ function hiddenLoadingCard(card) {
   loadingCard.style.display = "none";
 }
 
+
+// This refresh the token
+async function refreshToken() {
+  countRefresingToken++;
+  if (countRefresingToken > 2) {
+    throw new Error("Too many token refresh attempts");
+  }
+  try {
+    const response = await fetch(`${window.APP_CONFIG.api_url}/auth/refresh`, {
+      method: "POST",
+      credentials: true,
+    });
+    if (!response.ok) {
+      window.location.href = window.APP_CONFIG.base_url + '/static/login';
+    }
+  } catch (err) {
+    console.log("Error refreshing token: ", err);
+    throw err;
+  } 
+}
+
+// Load memberships
 async function loadMembershipCards() {
 
   try {
@@ -126,22 +129,66 @@ async function loadMembershipCards() {
       const res = await response.json();
       membershipsList = res.memberships;
 
-      console.log("Memberships fetched: ", membershipsList);
-
       // If no memberships, create personal membership
-      if (membershipsList.length == 0) {
-        membershipsList = await CreatePersonalMembership();
+      if (membershipsList.length == 0 && countRefresingToken < 2) {
+        await CreatePersonalMembership();
       }
 
       loadingMemberships = false;
       applyFilter(currentFilter);
 
-    } else {
-      console.error("Error fetching memberships: ", response.status);
+    } else if(response.status === 401){
+      const res = await response.json();
+      if (res.details == null) {
+        window.location.href = window.APP_CONFIG.base_url + '/static/login';
+      }
+      else if (res.details.token_status == "token_expired") {
+        // Token expired, try to refresh
+        if (countRefresingToken <= 2) {
+          await refreshToken();
+          loadMembershipCards();
+
+        }
+      }
+      else {
+
+      }
+
+    }
+    
+    else {
+      // console.error("Error fetching memberships: ", response);
     }
   } catch (err) {
     console.error("Error fetching memberships: ", err);
   }
+}
+
+
+// Create personal membership
+async function CreatePersonalMembership() {
+  try {
+    const response = await fetch(`${window.APP_CONFIG.api_url}/org/personal`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (response.ok) {
+      const res = await response.json();
+      membershipsList = [res.membership];
+
+      loadingMemberships = false;
+      applyFilter(currentFilter);
+    } else if (response.status === 401) {
+      if (countRefresingToken <= 2) {
+        await refreshToken();
+        await CreatePersonalMembership();
+      }
+
+    }
+  } catch (err) {
+    console.error("Error creating personal membership card:", err);
+  }
+
 }
 
 const rolesClass = {
@@ -229,24 +276,6 @@ async function CreateMembershipCards() {
 
 }
 
-async function CreatePersonalMembership() {
-
-  try {
-    const response = await fetch(`${window.APP_CONFIG.api_url}/org/personal`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      const res = await response.json();
-      membershipsList = [res.membership];
-    }
-  } catch (err) {
-    console.error("Error creating personal membership card:", err);
-  }
-
-}
 
 
 function convertoTimeStampToLegibleDate(timestamp) {
@@ -254,4 +283,20 @@ function convertoTimeStampToLegibleDate(timestamp) {
   const date = new Date(timestamp);
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
   return date.toLocaleDateString(undefined, options);
+}
+
+
+// Toggle selected class on space cards
+function toggleSelectedCardSpace(card) {
+  const cardsSpace = document.querySelectorAll(".cardSpace");
+  cardsSpace.forEach((c) => {
+    c.classList.remove("selected");
+  });
+
+  // Check if card is already selected
+  if (card.classList.contains("selected")) {
+    card.classList.remove("selected");
+    return;
+  }
+  card.classList.add("selected");
 }

@@ -1,0 +1,98 @@
+
+nav {
+    position: sticky;
+    top: 10px;
+    left: 0;
+    margin-bottom: 24px;
+    margin-top: 8px;
+    height: 75px;
+    
+    border: 1px solid var(--color-grey-light);
+    border-radius: var(--border-radius);
+    padding: 12px 20px;
+    background-color: var(--color-grey-lighter);
+    /* background-color: white; */
+    box-shadow: var(--shadow);
+    z-index: 100;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#logo {
+    width: 150px;
+
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#logo:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    nav {
+        padding: 12px 12px;
+    }
+
+    #logo {
+        width: 120px;
+    }
+
+}
+
+.nav-container {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap:12px;
+
+}
+
+.btn-navbar {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.btn-navbar:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+#btn-logout {
+    color: white;
+    background-color: red;
+    border-radius: var(--border-radius);
+    padding: 3px 8px;
+    font-weight: bold;
+    
+}
+
+#btn-notifications {
+    font-size: 1.3rem;
+    font-weight: 200;
+}
+
+
+
+
+
+
+
+#profileImage {
+    height: 1.5rem;
+    width: 1.5rem;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+
+@media (max-width: 850px) {
+    #btn-notifications {
+        font-size: 1.4rem;
+        transition: none;
+    }
+
+
+}

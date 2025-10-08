@@ -9,17 +9,31 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="spaces.css">
     <link rel="stylesheet" href="styleCompany.css">
-    <link rel="stylesheet" href="styleJobs.css">
     <link rel="stylesheet" href="loadingCard.css">
+    <link rel="stylesheet" href="navbar.css">
 
 </head>
 <body>
     <script src="./config.js"></script>
-    <header>
-        <h1>Selecciona tu espacio de trabajo</h1>
-        <p>Organiza y gestiona tus trabajos y empresas desde un solo lugar.</p>
-    </header>
+    <nav>
+        <div>
+            <img src="logo.svg" id="logo" alt="Logo" id="logo">
+        </div>
+        <div class="nav-container">
+            <i class="material-icons btn-navbar" id="btn-notifications">notifications_none</i>
+            <div class="btn-navbar" id="btn-logout">
+                <!-- <i class="material-icons">exit_to_app</i> -->
+                    Salir
+            </div>
+            <img src="205.jpg" class="btn-navbar" id="profileImage" alt="profile image">
+
+        </div>
+    </nav>
     <main>
+        <header>
+            <h1>Selecciona tu espacio de trabajo</h1>
+            <p>Organiza y gestiona tus trabajos y empresas desde un solo lugar.</p>
+        </header>
         <section class="cardSection">
             <div class="card cardSpace" data-space-id="independent">
                 <i class="material-icons">face</i>
@@ -124,215 +138,12 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            <div class="rol rolPartner">
-                                Socio
-                            </div>
-                            <div class="statusOrg statusOrgActive">
-                                <b>Activo</b>
-                            </div>
-                        </div>
-
-                        
-                        
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Compañia Juan Diego y Jesus antonio con un nombre muchisimo mas largo para comprobar si funcionar web kit</div>
-                        <div class="date" >
-
-                        🗓️ 04/08/2024
-                        </div>
-                    </div>
-                </div>
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            
-                            <div class="rol rolOwner">
-                                Jefe
-                            </div>
-                            <div class="statusOrg statusOrgSuspended">
-                                <b>Suspendida</b>
-                            </div>
-                            
-                        </div>
-                        
-                        
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Empresas publicas de medellin</div>
-                        <div class="date">
-
-                         🗓️ 04/08/2024
-                        </div>
-                        
-                    </div>
-                </div>
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            
-                            <div class="rol rolOwner">
-                                Jefe
-                            </div>
-                            <div class="statusOrg statusOrgSuspended">
-                                <b>Suspendida</b>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Empresas publicas de medellin</div>
-                        <div class="date">
-
-                         🗓️ 04/08/2024
-                        </div>
-                    </div>
-                    
-                </div> 
-                -->
             </div>
-
-
-
-
-
-
-
         </section>
 
-        <!-- My jobs -->
-<!-- 
-        <section class="companiesSection">
-            <div class="spaceHeader">
-                <h2 class="spaceSelected">Mis trabajos</h2>
-                <p class="spaceDescription">Elije el empleo que vas a desempeñar.</p>
-            </div>
-            <div class="companiesContainer">
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            <div class="rol rolAdmin">
-                                Administrador
-                            </div>
-                            <div class="statusOrg statusOrgActive">
-                                <b>Activo</b>
-                            </div>
-                        </div>
-                        
-                        <div class="date">
 
-                        04/08/2024
-                        </div>
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Empresa Juan Diego</div>
-                        
-                    </div>
-                </div>
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            <div class="rol rolAccountant">
-                                contador
-                            </div>
-                            <div class="statusOrg statusOrgActive">
-                                <b>Activo</b>
-                            </div>
-                            
-                        </div>
-                        
-                        <div class="date">
-
-                        04/08/2024
-                        </div>
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Compañia Juan Diego y Jesus antonio</div>
-                        
-                    </div>
-                </div>
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            
-                            <div class="rol rolDriver">
-                                conductor
-                            </div>
-                            <div class="statusOrg rolStatusSuspended">
-                                <b>Suspendida</b>
-                            </div>
-                            
-                        </div>
-                        
-                        <div class="date">
-
-                        04/08/2024
-                        </div>
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Empresas publicas de medellin</div>
-                        
-                    </div>
-                </div>
-                <div class="card cardCompany">
-                    <div class="cardCompanyHeader">
-                        
-                        <div class="headerTopCompany">
-                            
-                            <div class="rol rolAccountant">
-                                contador
-                            </div>
-                            <div class="statusOrg rolStatusSuspended">
-                                <b>Suspendida</b>
-                            </div>
-                        </div>
-                        
-                        <div class="date">
-
-                        04/08/2024
-                        </div>
-
-                    </div>
-                    <div class="cardCompanyBody">
-
-                        <div class="nameOrg">Empresas publicas de medellin</div>
-                        
-                    </div>
-                </div>
-
-            </div>
-
-
-
-            
-
-
-
-        </section>
-     -->
     </main>
+    
     <script src="script.js"></script>
 </body>
 </html>

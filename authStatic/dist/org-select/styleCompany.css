@@ -21,17 +21,10 @@
 }
 
 .cardCompany {
-    cursor: pointer;
-    border: 1px solid #eee;
-    border-radius: var(--border-radius);
-    padding: var(--padding-cards);
-    width: 100%;
-    box-shadow: var(--shadow);
-
-
     transform: translateY(40px);
     animation: fadeInUp 0.1s forwards;
 }
+
 
 .cardCompany:nth-child(1) { animation-delay: 0.05s; }
 .cardCompany:nth-child(2) { animation-delay: 0.1s; }
@@ -66,12 +59,6 @@
 
     line-height: 1.2em;
     height: calc(1.2em * 2);
-}
-
-
-.cardCompany:hover {
-    border-color: #ddd;
-    box-shadow: var(--shadow-2);
 }
 
 .cardCompanyHeader {

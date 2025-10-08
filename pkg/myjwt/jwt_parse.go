@@ -7,12 +7,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type TokenStatus int
+type TokenStatus string
 
 const (
-	TokenStatusValid TokenStatus = iota
-	TokenStatusExpired
-	TokenStatusInvalid
+	TokenStatusValid   TokenStatus = "token_valid"
+	TokenStatusExpired TokenStatus = "token_expired"
+	TokenStatusInvalid TokenStatus = "token_invalid"
 )
 
 func (t *jwtTokenizer) parseToken(tokenString string, claims jwt.Claims) (jwt.Claims, TokenStatus) {
